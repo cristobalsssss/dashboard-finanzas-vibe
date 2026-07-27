@@ -12,6 +12,9 @@
     <!-- Chart.js CDN para gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <!-- PapaParse para procesar CSV en el navegador -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -85,7 +88,7 @@
                             d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                             clip-rule="evenodd" />
                     </svg>
-                    Datos actualizados recientemente
+                    Datos actualizados en tiempo real desde Google Sheets
                 </span>
             </div>
         </header>
@@ -232,27 +235,11 @@
 
     <!-- Script de Lógica y Cálculos -->
     <script>
-        // Datos mock simulando la carga desde JSON
-        const finanzasData = [
-            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Transferencia", "Entidad_Bancaria": "Banco Security", "Monto_Numerico": 250000, "Contraparte": "Erick Soto", "Descripcion": "Mueble entrada", "FechaHora": "2026-07-10 19:43", "Tipo_Financiero": "Financiero" },
-            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Compra", "Entidad_Bancaria": "ZumPago", "Monto_Numerico": 26480, "Contraparte": "Mundo Pacífico", "Descripcion": "Servicio Internet", "FechaHora": "2026-07-12 10:15", "Tipo_Financiero": "Financiero" },
-            { "Clasificacion_Financiera": "Ingreso", "Tipo_Operacion": "Transferencia", "Entidad_Bancaria": "Banco Santander", "Monto_Numerico": 850000, "Contraparte": "Empresa Servicios SpA", "Descripcion": "Sueldo / Honorarios", "FechaHora": "2026-07-01 09:00", "Tipo_Financiero": "Financiero" },
-            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Compra", "Entidad_Bancaria": "Transbank", "Monto_Numerico": 45900, "Contraparte": "Lider Supermercados", "Descripcion": "Mercadería del mes", "FechaHora": "2026-07-03 15:30", "Tipo_Financiero": "Financiero" },
-            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Compra", "Entidad_Bancaria": "UniRed", "Monto_Numerico": 18200, "Contraparte": "Enel Distribución", "Descripcion": "Cuenta Electricidad", "FechaHora": "2026-07-05 11:20", "Tipo_Financiero": "Financiero" },
-            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Compra", "Entidad_Bancaria": "Webpay", "Monto_Numerico": 12500, "Contraparte": "Aguas Andinas", "Descripcion": "Cuenta Agua", "FechaHora": "2026-07-06 08:45", "Tipo_Financiero": "Financiero" },
-            { "Clasificacion_Financiera": "Ingreso", "Tipo_Operacion": "Transferencia", "Entidad_Bancaria": "BancoEstado", "Monto_Numerico": 120000, "Contraparte": "Juan Perez", "Descripcion": "Devolución préstamo", "FechaHora": "2026-07-08 14:10", "Tipo_Financiero": "Financiero" },
-            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Compra", "Entidad_Bancaria": "Banco Security", "Monto_Numerico": 8990, "Contraparte": "Netflix", "Descripcion": "Suscripción mensual", "FechaHora": "2026-07-09 22:00", "Tipo_Financiero": "Financiero" },
-            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Compra", "Entidad_Bancaria": "Banco Santander", "Monto_Numerico": 15400, "Contraparte": "Copec", "Descripcion": "Combustible vehículo", "FechaHora": "2026-07-11 18:05", "Tipo_Financiero": "Financiero" },
-            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Compra", "Entidad_Bancaria": "ZumPago", "Monto_Numerico": 32000, "Contraparte": "Claro Chile", "Descripcion": "Plan Telefonía", "FechaHora": "2026-07-14 16:50", "Tipo_Financiero": "Financiero" },
-            { "Clasificacion_Financiera": "Ingreso", "Tipo_Operacion": "Transferencia", "Entidad_Bancaria": "Banco Chile", "Monto_Numerico": 45000, "Contraparte": "Fundación Reembolsos", "Descripcion": "Reembolso médico", "FechaHora": "2026-07-15 12:30", "Tipo_Financiero": "Financiero" },
-            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Compra", "Entidad_Bancaria": "Transbank", "Monto_Numerico": 68900, "Contraparte": "Farmacias Ahumada", "Descripcion": "Medicamentos", "FechaHora": "2026-07-16 17:15", "Tipo_Financiero": "Financiero" },
-            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Compra", "Entidad_Bancaria": "UniRed", "Monto_Numerico": 22000, "Contraparte": "Metrogas", "Descripcion": "Gas domicilio", "FechaHora": "2026-07-18 10:00", "Tipo_Financiero": "Financiero" },
-            { "Clasificacion_Financiera": "Ingreso", "Tipo_Operacion": "Transferencia", "Entidad_Bancaria": "Banco Falabella", "Monto_Numerico": 50000, "Contraparte": "Carmen Hidalgo", "Descripcion": "Farmacia Devolucion", "FechaHora": "2026-07-19 10:00", "Tipo_Financiero": "Financiero" }
-        ];
+        // URL del Google Sheets en formato CSV
+        const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQmY2cIdZKipZcic_s61HaLZ3IoPVPoPQORK9Xllap6fqnrpjr3vpXEqEkgEuVpgx034HhJvBXAmBeF/pub?gid=0&single=true&output=csv';
 
-        // Variables de estado para paginación y filtros
-        let currentPage = 1;
-        const itemsPerPage = 10;
+        // Variable global para almacenar los datos financieros cargados del CSV
+        let finanzasData = [];
 
         // Formateador de moneda chilena
         function formatCLP(amount) {
@@ -457,45 +444,86 @@
             });
         }
 
-        // Función principal de inicialización
-        function initDashboard() {
-            const kpiData = calculateKPIs(finanzasData);
+        // Función principal de inicialización - carga datos desde Google Sheets CSV
+        async function initDashboard() {
+            try {
+                // Cargar y parsear el CSV desde Google Sheets usando PapaParse
+                await loadCSVData();
 
-            // Renderizar KPIs
-            document.getElementById('total-ingresos').textContent = formatCLP(kpiData.totalIngresos);
-            document.getElementById('total-egresos').textContent = formatCLP(kpiData.totalEgresos);
-            const balanceEl = document.getElementById('balance-neto');
-            balanceEl.textContent = formatCLP(kpiData.balanceNeto);
+                // Esperar a que los datos estén cargados para renderizar
+                if (finanzasData.length > 0) {
+                    const kpiData = calculateKPIs(finanzasData);
 
-            // Color del balance según valor
-            setBalanceCardColor(kpiData.balanceNeto);
+                    // Renderizar KPIs
+                    document.getElementById('total-ingresos').textContent = formatCLP(kpiData.totalIngresos);
+                    document.getElementById('total-egresos').textContent = formatCLP(kpiData.totalEgresos);
+                    const balanceEl = document.getElementById('balance-neto');
+                    balanceEl.textContent = formatCLP(kpiData.balanceNeto);
 
-            // Colorear KPIs según clasificación
-            if (kpiData.totalIngresos > 0) {
-                document.querySelector('#kpi-section article:nth-child(1) .flex.items-center.justify-between.mb-4 svg').className =
-                    'w-8 h-8 text-green-500 fill-current';
-            } else {
-                document.querySelector('#kpi-section article:nth-child(1) .flex.items-center.justify-between.mb-4 svg').className =
-                    'w-8 h-8 text-gray-400 fill-current';
+                    // Color del balance según valor
+                    setBalanceCardColor(kpiData.balanceNeto);
+
+                    // Colorear KPIs según clasificación
+                    if (kpiData.totalIngresos > 0) {
+                        document.querySelector('#kpi-section article:nth-child(1) .flex.items-center.justify-between.mb-4 svg').className =
+                            'w-8 h-8 text-green-500 fill-current';
+                    } else {
+                        document.querySelector('#kpi-section article:nth-child(1) .flex.items-center.justify-between.mb-4 svg').className =
+                            'w-8 h-8 text-gray-400 fill-current';
+                    }
+
+                    if (kpiData.totalEgresos > 0) {
+                        document.querySelector('#kpi-section article:nth-child(2) .flex.items-center.justify-between.mb-4 svg').className =
+                            'w-8 h-8 text-red-500 fill-current';
+                    } else {
+                        document.querySelector('#kpi-section article:nth-child(2) .flex.items-center.justify-between.mb-4 svg').className =
+                            'w-8 h-8 text-gray-400 fill-current';
+                    }
+
+                    // Inicializar gráficos de filtro
+                    populateEntityFilter();
+                    populateTypeFilter();
+
+                    // Iniciar con filtros vacíos para mostrar los primeros 10 registros (página 1)
+                    handleFilters('', '', '');
+
+                    // Configurar event listeners para filtros dinámicos
+                    setupEventListeners();
+                } else {
+                    throw new Error('No se encontraron datos en el CSV');
+                }
+            } catch (error) {
+                console.error('Error al cargar el dashboard:', error);
+                alert('Error al cargar los datos: ' + error.message);
             }
+        }
 
-            if (kpiData.totalEgresos > 0) {
-                document.querySelector('#kpi-section article:nth-child(2) .flex.items-center.justify-between.mb-4 svg').className =
-                    'w-8 h-8 text-red-500 fill-current';
-            } else {
-                document.querySelector('#kpi-section article:nth-child(2) .flex.items-center.justify-between.mb-4 svg').className =
-                    'w-8 h-8 text-gray-400 fill-current';
-            }
+        // Función para descargar y parsear el CSV desde Google Sheets
+        function loadCSVData() {
+            return new Promise((resolve, reject) => {
+                Papa.parse(SHEET_CSV_URL, {
+                    download: true,
+                    header: true,
+                    complete: function (results) {
+                        // Mapear los datos del CSV a la estructura esperada
+                        finanzasData = results.data.map(row => ({
+                            Clasificacion_Financiera: row.Clasificacion_Financiera || '',
+                            Tipo_Operacion: row.Tipo_Operacion || '',
+                            Entidad_Bancaria: row.Entidad_Bancaria || '',
+                            Monto_Numerico: parseFloat(row.Monto_Numerico) || 0,
+                            Contraparte: row.Contraparte || '',
+                            Descripcion: row.Descripcion || '',
+                            FechaHora: row.FechaHora || '',
+                            Tipo_Financiero: row.Tipo_Financiero || ''
+                        }));
 
-            // Inicializar gráficos de filtro
-            populateEntityFilter();
-            populateTypeFilter();
-
-            // Iniciar con filtros vacíos para mostrar los primeros 10 registros (página 1)
-            handleFilters('', '', '');
-
-            // Configurar event listeners para filtros dinámicos
-            setupEventListeners();
+                        resolve(finanzasData);
+                    },
+                    error: function (error) {
+                        reject(new Error('Error al leer el CSV: ' + error.message));
+                    }
+                });
+            });
         }
 
         // Llenar el select de Entidad Bancaria con opciones únicas
@@ -583,6 +611,8 @@
         // Variables globales para filtrado y paginación
         let filteredData = [];
         let totalFilteredData = 0;
+        const itemsPerPage = 10;
+        let currentPage = 1;
 
         // Manejar cambios en filtros
         function handleFilters(searchQuery, entityFilter, typeFilter) {
