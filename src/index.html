@@ -204,6 +204,8 @@
                                 Monto</th>
                             <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Descripción</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Contraparte</th>
                         </tr>
                     </thead>
                     <tbody id="transactions-body" class="divide-y divide-gray-100 bg-white">
@@ -356,10 +358,13 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-semibold ${item.Clasificacion_Financiera === 'Ingreso' ? 'text-green-600' : 'text-gray-900'}">
                         ${formatCLP(item.Monto_Numerico)}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 max-w-xs truncate" title="${item.Descripcion}">
-                        ${item.Descripcion}
-                    </td>
-                `;
+                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 max-w-xs truncate" title="${item.Descripcion}">
+                         ${item.Descripcion}
+                     </td>
+                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 max-w-[200px] truncate" title="${item.Contraparte}">
+                         ${item.Contraparte || '-'}
+                     </td>
+                 `;
 
                 tbody.appendChild(tr);
             });
