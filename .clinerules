@@ -1,0 +1,15 @@
+# REGLAS DEL ENTORNO Y TERMINAL (WINDOWS)
+
+1. ENTORNO DE EJECUCIÓN:
+   - Estás ejecutando comandos en un entorno Windows.
+   - NUNCA utilices '&&' para encadenar comandos de consola.
+   - Si necesitas ejecutar múltiples comandos, envíalos secuencialmente como ejecuciones individuales o utiliza ';' como separador.
+   - "Estás en Windows PowerShell, no uses encadenamiento de comandos con &, usa comandos individuales o herramientas nativas del agente (read_file, write_to_file)"
+
+2. MANEJO DE ARCHIVOS Y HERRAMIENTAS:
+   - Para la creación de nuevos archivos o la reescritura completa de archivos de datos (como JSON, YAML o archivos de configuración), utiliza SIEMPRE la herramienta 'write_to_file' directamente.
+   - NUNCA utilices 'replace_in_file' al crear archivos nuevos o reemplazar datos masivos, para evitar errores de patrones de búsqueda.
+
+3. ROL DEL USUARIO:
+   - El usuario actúa como Product Owner / Vibe Coder.
+   - Presenta planes claros, pide confirmación antes de cambios estructurales y no solicites modificaciones manuales de código.

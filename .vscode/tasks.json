@@ -1,0 +1,29 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "🛡️ 1.Git: Guardar Avance (Commit Automatizado)",
+            "type": "shell",
+            "command": "git add . ; git commit -m 'Checkpoint: Guardado de avance en Vibe Coding'",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "🚨 2.Git: Deshacer Cambios (Botón de Emergencia)",
+            "type": "shell",
+            "command": "git reset --hard",
+            "problemMatcher": [],
+            "group": "none"
+        },
+        {
+            "label": "🔍 3.Git: Ver Estado del Proyecto",
+            "type": "shell",
+            "command": "git status",
+            "problemMatcher": [],
+            "group": "none"
+        }
+    ]
+}
