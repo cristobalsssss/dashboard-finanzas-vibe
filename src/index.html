@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Financiero - Control y Visualización</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js CDN para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Configurar Tailwind con paleta de colores personalizada -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        ingresos: '#10B981',
+                        egresos: '#EF4444',
+                        neutro: '#6B7280'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Estilos base */
+        body {
+            background-color: #F9FAFB;
+        }
+
+        /* Animaciones suaves */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Badge hover effect */
+        .badge:hover {
+            transform: scale(1.05);
+            transition: transform 0.2s ease;
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased">
+
+    <!-- Contenedor Principal -->
+    <div class="min-h-screen p-4 md:p-8 max-w-7xl mx-auto">
+
+        <!-- Encabezado Moderno -->
+        <header class="mb-8 fade-in">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                Dashboard Financiero
+            </h1>
+            <p class="text-gray-600 text-lg">Control y visualización de movimientos</p>
+
+            <!-- Indicador de estado -->
+            <div class="mt-4 flex items-center gap-3">
+                <span
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Datos actualizados recientemente
+                </span>
+            </div>
+        </header>
+
+        <!-- Tarjetas KPI -->
+        <section id="kpi-section" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 fade-in">
+            <!-- Total Ingresos -->
+            <article
+                class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-gray-700">Total Ingresos</h2>
+                    <svg class="w-8 h-8 text-ingenso" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L11 5.414V16h1a1 1 0 110 2H8v-1a1 1 0 112 0v1h3a1 1 0 110 2H9v-1a1 1 0 01-1-1V5.414L6 7.707A1 1 0 014.293 6.293l3-3A1 1 0 017 3h3z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <p id="total-ingresos" class="text-3xl font-bold text-gray-900">$0</p>
+            </article>
+
+            <!-- Total Egresos -->
+            <article
+                class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-gray-700">Total Egresos</h2>
+                    <svg class="w-8 h-8 text-egresos" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L11 5.414V16h1a1 1 0 110 2H8v-1a1 1 0 112 0v1h3a1 1 0 110 2H9v-1a1 1 0 01-1-1V5.414L6 7.707A1 1 0 014.293 6.293l3-3A1 1 0 017 3h3z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <p id="total-egresos" class="text-3xl font-bold text-gray-900">$0</p>
+            </article>
+
+            <!-- Balance Neto -->
+            <article id="balance-card"
+                class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-gray-700">Balance Neto</h2>
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L11 5.414V16h1a1 1 0 110 2H8v-1a1 1 0 112 0v1h3a1 1 0 110 2H9v-1a1 1 0 01-1-1V5.414L6 7.707A1 1 0 014.293 6.293l3-3A1 1 0 017 3h3z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <p id="balance-neto" class="text-3xl font-bold text-gray-900">$0</p>
+            </article>
+        </section>
+
+        <!-- Gráfico de Distribución y Tabla -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 fade-in">
+
+            <!-- Gráfico de Egresos por Entidad Bancaria -->
+            <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Distribución de Egresos por Entidad</h2>
+                <div class="relative h-64 md:h-80 w-full">
+                    <canvas id="expenseChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Resumen Adicional -->
+            <div
+                class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col justify-center items-center text-center">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4 w-full">Total Movimientos</h2>
+                <p id="total-movements" class="text-5xl font-bold text-gray-900 mb-2">0</p>
+                <span class="text-sm text-gray-500">Transacciones registradas</span>
+            </div>
+        </section>
+
+        <!-- Tabla de Últimos Movimientos -->
+        <section class="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden fade-in">
+            <div class="p-6 border-b border-gray-100">
+                <h2 class="text-lg font-semibold text-gray-700">Últimos Movimientos</h2>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full" id="transactions-table">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                FechaHora</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Entidad Bancaria</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Tipo_Operacion</th>
+                            <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Monto</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactions-body" class="divide-y divide-gray-100 bg-white">
+                        <!-- Filas generadas dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Script de Lógica y Cálculos -->
+    <script>
+        // Datos mock simulando la carga desde JSON
+        const finanzasData = [
+            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Transferencia", "Entidad_Bancaria": "Banco Security", "Monto_Numerico": 250000, "Contraparte": "Erick Soto", "Descripcion": "Mueble entrada", "FechaHora": "2026-07-10 19:43", "Tipo_Financiero": "Financiero" },
+            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Compra", "Entidad_Bancaria": "ZumPago", "Monto_Numerico": 26480, "Contraparte": "Mundo Pacífico", "Descripcion": "Servicio Internet", "FechaHora": "2026-07-12 10:15", "Tipo_Financiero": "Financiero" },
+            { "Clasificacion_Financiera": "Ingreso", "Tipo_Operacion": "Transferencia", "Entidad_Bancaria": "Banco Santander", "Monto_Numerico": 850000, "Contraparte": "Empresa Servicios SpA", "Descripcion": "Sueldo / Honorarios", "FechaHora": "2026-07-01 09:00", "Tipo_Financiero": "Financiero" },
+            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Compra", "Entidad_Bancaria": "Transbank", "Monto_Numerico": 45900, "Contraparte": "Lider Supermercados", "Descripcion": "Mercadería del mes", "FechaHora": "2026-07-03 15:30", "Tipo_Financiero": "Financiero" },
+            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Compra", "Entidad_Bancaria": "UniRed", "Monto_Numerico": 18200, "Contraparte": "Enel Distribución", "Descripcion": "Cuenta Electricidad", "FechaHora": "2026-07-05 11:20", "Tipo_Financiero": "Financiero" },
+            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Compra", "Entidad_Bancaria": "Webpay", "Monto_Numerico": 12500, "Contraparte": "Aguas Andinas", "Descripcion": "Cuenta Agua", "FechaHora": "2026-07-06 08:45", "Tipo_Financiero": "Financiero" },
+            { "Clasificacion_Financiera": "Ingreso", "Tipo_Operacion": "Transferencia", "Entidad_Bancaria": "BancoEstado", "Monto_Numerico": 120000, "Contraparte": "Juan Perez", "Descripcion": "Devolución préstamo", "FechaHora": "2026-07-08 14:10", "Tipo_Financiero": "Financiero" },
+            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Compra", "Entidad_Bancaria": "Banco Security", "Monto_Numerico": 8990, "Contraparte": "Netflix", "Descripcion": "Suscripción mensual", "FechaHora": "2026-07-09 22:00", "Tipo_Financiero": "Financiero" },
+            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Compra", "Entidad_Bancaria": "Banco Santander", "Monto_Numerico": 15400, "Contraparte": "Copec", "Descripcion": "Combustible vehículo", "FechaHora": "2026-07-11 18:05", "Tipo_Financiero": "Financiero" },
+            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Compra", "Entidad_Bancaria": "ZumPago", "Monto_Numerico": 32000, "Contraparte": "Claro Chile", "Descripcion": "Plan Telefonía", "FechaHora": "2026-07-14 16:50", "Tipo_Financiero": "Financiero" },
+            { "Clasificacion_Financiera": "Ingreso", "Tipo_Operacion": "Transferencia", "Entidad_Bancaria": "Banco Chile", "Monto_Numerico": 45000, "Contraparte": "Fundación Reembolsos", "Descripcion": "Reembolso médico", "FechaHora": "2026-07-15 12:30", "Tipo_Financiero": "Financiero" },
+            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Compra", "Entidad_Bancaria": "Transbank", "Monto_Numerico": 68900, "Contraparte": "Farmacias Ahumada", "Descripcion": "Medicamentos", "FechaHora": "2026-07-16 17:15", "Tipo_Financiero": "Financiero" },
+            { "Clasificacion_Financiera": "Egreso", "Tipo_Operacion": "Compra", "Entidad_Bancaria": "UniRed", "Monto_Numerico": 22000, "Contraparte": "Metrogas", "Descripcion": "Gas domicilio", "FechaHora": "2026-07-18 10:00", "Tipo_Financiero": "Financiero" },
+            { "Clasificacion_Financiera": "Ingreso", "Tipo_Operacion": "Transferencia", "Entidad_Bancaria": "Banco Falabella", "Monto_Numerico": 50000, "Contraparte": "Carmen Hidalgo", "Descripcion": "Farmacia Devolucion", "FechaHora": "2026-07-19 10:00", "Tipo_Financiero": "Financiero" }
+        ];
+
+        // Formateador de moneda chilena
+        function formatCLP(amount) {
+            return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(amount);
+        }
+
+        // Función para obtener badge color por tipo de operación
+        function getOperationBadgeColor(type) {
+            const colors = {
+                'Transferencia': 'bg-blue-100 text-blue-700 border-blue-200',
+                'Pago': 'bg-purple-100 text-purple-700 border-purple-200',
+                'Compra': 'bg-orange-100 text-orange-700 border-orange-200',
+                'Desconocido': 'bg-gray-100 text-gray-700 border-gray-200'
+            };
+            return colors[type] || colors['Desconocido'];
+        }
+
+        // Cálculos de KPIs
+        function calculateKPIs(data) {
+            const ingresos = data.filter(item => item.Clasificacion_Financiera === 'Ingreso');
+            const egresos = data.filter(item => item.Clasificacion_Financiera === 'Egreso');
+
+            return {
+                totalIngresos: ingresos.reduce((sum, item) => sum + item.Monto_Numerico, 0),
+                totalEgresos: egresos.reduce((sum, item) => sum + item.Monto_Numerico, 0),
+                balanceNeto: ingresos.reduce((sum, item) => sum + item.Monto_Numerico, 0) -
+                    egresos.reduce((sum, item) => sum + item.Monto_Numerico, 0),
+                movimientosCount: data.length
+            };
+        }
+
+        // Agregar color dinámico al balance card
+        function setBalanceCardColor(balance) {
+            const card = document.getElementById('balance-card');
+            if (balance >= 0) {
+                card.classList.remove('border-red-200', 'hover:border-red-300');
+                card.classList.add('border-green-100', 'hover:border-green-300');
+                card.querySelector('.flex.items-center.justify-between.mb-4 svg').className =
+                    'w-8 h-8 text-ingenso fill-current';
+            } else {
+                card.classList.remove('border-green-100', 'hover:border-green-300');
+                card.classList.add('border-red-200', 'hover:border-red-300');
+                card.querySelector('.flex.items-center.justify-between.mb-4 svg').className =
+                    'w-8 h-8 text-egresos fill-current';
+            }
+        }
+
+        // Renderizar tabla de transacciones
+        function renderTransactions(data) {
+            const tbody = document.getElementById('transactions-body');
+            tbody.innerHTML = '';
+
+            // Ordenar por fecha (más reciente primero)
+            const sortedData = [...data].sort((a, b) =>
+                new Date(b.FechaHora) - new Date(a.FechaHora)
+            );
+
+            // Mostrar solo últimos 10 movimientos
+            const recentTransactions = sortedData.slice(0, 10);
+
+            recentTransactions.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 transition-colors duration-150';
+
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${item.FechaHora}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                        <span class="badge inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors cursor-pointer">${item.Entidad_Bancaria}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <span class="badge inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getOperationBadgeColor(item.Tipo_Operacion)} hover:scale-105 transition-transform cursor-pointer">${item.Tipo_Operacion}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-semibold ${item.Clasificacion_Financiera === 'Ingreso' ? 'text-green-600' : 'text-gray-900'}">
+                        ${formatCLP(item.Monto_Numerico)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 max-w-xs truncate" title="${item.Descripcion}">
+                        ${item.Descripcion}
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Agregar datos al gráfico de gastos por entidad
+        function buildExpenseChartData(data) {
+            const egresos = data.filter(item => item.Clasificacion_Financiera === 'Egreso');
+
+            // Agrupar por Entidad_Bancaria
+            const expenseByEntity = {};
+            let totalExpenses = 0;
+
+            egresos.forEach(item => {
+                if (!expenseByEntity[item.Entidad_Bancaria]) {
+                    expenseByEntity[item.Entidad_Bancaria] = 0;
+                }
+                expenseByEntity[item.Entidad_Bancaria] += item.Monto_Numerico;
+                totalExpenses += item.Monto_Numerico;
+            });
+
+            // Preparar datos para Chart.js
+            const labels = Object.keys(expenseByEntity);
+            const dataPoints = Object.values(expenseByEntity);
+
+            return { labels, dataPoints, totalExpenses };
+        }
+
+        // Inicializar gráfico con Chart.js
+        function initChart(labels, dataPoints, total) {
+            const ctx = document.getElementById('expenseChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Egresos por Entidad Bancaria (CLP)',
+                        data: dataPoints,
+                        backgroundColor: [
+                            '#EF4444', '#F97316', '#FB923C', '#FDBA74',
+                            '#84CC16', '#10B981', '#34D399', '#0EA5E9',
+                            '#3B82F6', '#60A5FA', '#A78BFA', '#8B5CF6'
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: { size: 12 },
+                                color: '#6B7280'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const entity = context.label || '';
+                                    const value = context.raw;
+                                    return `${entity}: ${formatCLP(value)}`;
+                                }
+                            },
+                            backgroundColor: 'rgba(31, 41, 55, 0.9)',
+                            padding: 12,
+                            titleFont: { size: 13 },
+                            bodyFont: { size: 12 }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Función principal de inicialización
+        function initDashboard() {
+            const kpiData = calculateKPIs(finanzasData);
+
+            // Renderizar KPIs
+            document.getElementById('total-ingresos').textContent = formatCLP(kpiData.totalIngresos);
+            document.getElementById('total-egresos').textContent = formatCLP(kpiData.totalEgresos);
+            const balanceEl = document.getElementById('balance-neto');
+            balanceEl.textContent = formatCLP(kpiData.balanceNeto);
+
+            // Color del balance según valor
+            setBalanceCardColor(kpiData.balanceNeto);
+
+            // Colorear KPIs según clasificación
+            if (kpiData.totalIngresos > 0) {
+                document.querySelector('#kpi-section article:nth-child(1) .flex.items-center.justify-between.mb-4 svg').className =
+                    'w-8 h-8 text-green-500 fill-current';
+            } else {
+                document.querySelector('#kpi-section article:nth-child(1) .flex.items-center.justify-between.mb-4 svg').className =
+                    'w-8 h-8 text-gray-400 fill-current';
+            }
+
+            if (kpiData.totalEgresos > 0) {
+                document.querySelector('#kpi-section article:nth-child(2) .flex.items-center.justify-between.mb-4 svg').className =
+                    'w-8 h-8 text-red-500 fill-current';
+            } else {
+                document.querySelector('#kpi-section article:nth-child(2) .flex.items-center.justify-between.mb-4 svg').className =
+                    'w-8 h-8 text-gray-400 fill-current';
+            }
+
+            // Renderizar tabla
+            renderTransactions(finanzasData);
+
+            // Inicializar gráfico
+            const chartData = buildExpenseChartData(finanzasData);
+            initChart(chartData.labels, chartData.dataPoints, chartData.totalExpenses);
+
+            // Actualizar contador de movimientos
+            document.getElementById('total-movements').textContent = kpiData.movimientosCount;
+        }
+
+        // Ejecutar al cargar la página
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+
+</html>
