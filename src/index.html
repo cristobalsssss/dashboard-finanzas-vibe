@@ -81,6 +81,14 @@
 
             <!-- Indicador de estado -->
             <div class="mt-4 flex items-center gap-3">
+                <button onclick="openModal()"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Nuevo Movimiento
+                </button>
                 <span
                     class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -232,6 +240,123 @@
                 </div>
             </div>
         </section>
+
+        <!-- Modal para Nuevo Movimiento -->
+        <div id="newMovementModal"
+            class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-xl shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto fade-in">
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between p-6 border-b border-gray-100">
+                    <h3 class="text-xl font-semibold text-gray-900">Nuevo Movimiento</h3>
+                    <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <form id="newMovementForm" class="p-6 space-y-4">
+                    <!-- Clasificación -->
+                    <div>
+                        <label for="classification"
+                            class="block text-sm font-medium text-gray-700 mb-1">Clasificación</label>
+                        <select id="classification" name="clasificacion" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Seleccionar clasificación</option>
+                            <option value="Ingreso">Ingreso</option>
+                            <option value="Egreso">Egreso</option>
+                            <option value="No_Financiero">No Financiero</option>
+                        </select>
+                    </div>
+
+                    <!-- Tipo Operación -->
+                    <div>
+                        <label for="operationType" class="block text-sm font-medium text-gray-700 mb-1">Tipo de
+                            Operación</label>
+                        <select id="operationType" name="tipo_operacion" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Seleccionar tipo</option>
+                            <option value="Transferencia">Transferencia</option>
+                            <option value="Pago">Pago</option>
+                            <option value="Compra">Compra</option>
+                            <option value="Depósito">Depósito</option>
+                        </select>
+                    </div>
+
+                    <!-- Entidad Bancaria -->
+                    <div>
+                        <label for="bankEntity" class="block text-sm font-medium text-gray-700 mb-1">Entidad
+                            Bancaria</label>
+                        <input type="text" id="bankEntity" name="entidad_bancaria"
+                            placeholder="Ej: BBVA, Santander, Scotiabank..." required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <!-- Monto Numérico -->
+                    <div>
+                        <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Monto Numérico</label>
+                        <input type="number" id="amount" name="monto_numerico" step="0.01" min="0"
+                            placeholder="Ej: 50000" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <!-- Contraparte -->
+                    <div>
+                        <label for="counterparty"
+                            class="block text-sm font-medium text-gray-700 mb-1">Contraparte</label>
+                        <input type="text" id="counterparty" name="contraparte"
+                            placeholder="Nombre de la persona o empresa..." required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <!-- Descripción -->
+                    <div>
+                        <label for="description"
+                            class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                        <input type="text" id="description" name="descripcion" placeholder="Detalle del movimiento..."
+                            required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <!-- Fecha y Hora -->
+                    <div>
+                        <label for="dateTime" class="block text-sm font-medium text-gray-700 mb-1">Fecha y Hora</label>
+                        <input type="datetime-local" id="dateTime" name="fecha_hora" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <!-- Tipo Financiero -->
+                    <div>
+                        <label for="financialType" class="block text-sm font-medium text-gray-700 mb-1">Tipo
+                            Financiero</label>
+                        <select id="financialType" name="tipo_financiero" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Seleccionar tipo</option>
+                            <option value="Financiero">Financiero</option>
+                            <option value="No Financiero">No Financiero</option>
+                        </select>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+                        <button type="button" onclick="closeModal()"
+                            class="px-6 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+                            Cancelar
+                        </button>
+                        <button type="submit" id="saveBtn"
+                            class="px-6 py-2.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-5 8h2M3 16h2m-2 4h2M3 16l4-4h9l4 4v4H3z"></path>
+                            </svg>
+                            Guardar Movimiento
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
     </div>
 
@@ -668,9 +793,153 @@
             nextPageBtn.disabled = currentPage >= totalPages || totalPages <= 1;
         }
 
+        // Variables para manejo del modal y formulario
+        let isSaving = false;
+
+        // Abrir el modal de nuevo movimiento
+        function openModal() {
+            if (isSaving) return; // No permitir abrir si está guardando
+
+            const modal = document.getElementById('newMovementModal');
+            modal.classList.remove('hidden');
+        }
+
+        // Cerrar el modal
+        function closeModal() {
+            const modal = document.getElementById('newMovementModal');
+            modal.classList.add('hidden');
+
+            // Limpiar formulario
+            const form = document.getElementById('newMovementForm');
+            form.reset();
+        }
+
+        // Manejar envío del formulario
+        async function handleSubmit(e) {
+            e.preventDefault();
+
+            if (isSaving) return;
+            isSaving = true;
+
+            const saveBtn = document.getElementById('saveBtn');
+            const originalContent = saveBtn.innerHTML;
+
+            // Mostrar estado de guardando...
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = `
+        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Guardando...
+    `;
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            // Preparar el objeto para enviar al webhook
+            const payload = {
+                clasificacion: data.clasificacion,
+                tipo_operacion: data.tipo_operacion,
+                entidad_bancaria: data.entidad_bancaria,
+                monto_numerico: parseFloat(data.monto_numerico),
+                contraparte: data.contraparte || '',
+                descripcion: data.descripcion || '',
+                fecha_hora: new Date(data.fecha_hora).toISOString(),
+                tipo_financiero: data.tipo_financiero
+            };
+
+            try {
+                const response = await fetch('http://localhost:5678/webhook-test/nuevo-movimiento', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    // Éxito: cerrar modal, mostrar notificación y refrescar datos
+                    closeModal();
+
+                    // Mostrar notificación de éxito
+                    showNotification('Movimiento guardado exitosamente', 'success');
+
+                    // Refrescar dashboard
+                    refreshDashboardAfterAdd(payload);
+                } else {
+                    throw new Error('Error al guardar el movimiento');
+                }
+            } catch (error) {
+                console.error('Error al enviar al webhook:', error);
+
+                // Mostrar notificación de error
+                showNotification('Error al guardar: ' + error.message, 'error');
+            } finally {
+                isSaving = false;
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = originalContent;
+            }
+        }
+
+        // Función para refrescar dashboard después de agregar nuevo movimiento
+        function refreshDashboardAfterAdd(newMovement) {
+            // Agregar el nuevo movimiento al array de datos
+            finanzasData.push({
+                Clasificacion_Financiera: newMovement.clasificacion,
+                Tipo_Operacion: newMovement.tipo_operacion,
+                Entidad_Bancaria: newMovement.entidad_bancaria || '',
+                Monto_Numerico: newMovement.monto_numerico,
+                Contraparte: newMovement.contraparte,
+                Descripcion: newMovement.descripcion,
+                FechaHora: newMovement.fecha_hora,
+                Tipo_Financiero: newMovement.tipo_financiero
+            });
+
+            // Actualizar KPIs
+            const kpiData = calculateKPIs(finanzasData);
+            document.getElementById('total-ingresos').textContent = formatCLP(kpiData.totalIngresos);
+            document.getElementById('total-egresos').textContent = formatCLP(kpiData.totalEgresos);
+            const balanceEl = document.getElementById('balance-neto');
+            balanceEl.textContent = formatCLP(kpiData.balanceNeto);
+
+            // Color del balance según valor
+            setBalanceCardColor(kpiData.balanceNeto);
+
+            // Actualizar contador de movimientos
+            document.getElementById('total-movements').textContent = finanzasData.length;
+
+            // Aplicar filtros actuales
+            handleFilters(
+                searchInput.value,
+                document.getElementById('entityFilter').value,
+                document.getElementById('typeFilter').value
+            );
+        }
+
+        // Mostrar notificaciones (toast)
+        function showNotification(message, type) {
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500'
+            };
+
+            const notification = document.createElement('div');
+            notification.className = `${colors[type]} text-white px-6 py-4 rounded-lg shadow-lg mb-2 fade-in transform transition-all duration-300 fixed top-4 right-4 z-[100]`;
+            notification.textContent = message;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100px)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
         // Ejecutar al cargar la página
         document.addEventListener('DOMContentLoaded', initDashboard);
-    </script>
-</body>
+</body >
 
-</html>
+</html >
