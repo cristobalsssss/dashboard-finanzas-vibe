@@ -90,6 +90,15 @@
                     </svg>
                     Datos actualizados en tiempo real desde Google Sheets
                 </span>
+
+                <!-- Botón Nuevo Movimiento -->
+                <button id="newMovementBtn"
+                    class="ml-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Nuevo Movimiento
+                </button>
             </div>
         </header>
 
@@ -233,6 +242,131 @@
             </div>
         </section>
 
+    </div>
+
+    <!-- Modal para Nuevo Movimiento -->
+    <div id="newMovementModal"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 fade-in">
+        <div class="bg-white rounded-xl shadow-lg max-w-2xl w-full mx-4 p-6">
+            <!-- Encabezado del Modal -->
+            <div class="flex items-center justify-between mb-6 border-b pb-4">
+                <h2 class="text-2xl font-bold text-gray-900">Nuevo Movimiento</h2>
+                <button id="closeModalBtn"
+                    class="text-gray-400 hover:text-gray-600 transition-colors focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Formulario -->
+            <form id="newMovementForm" class="space-y-4">
+                <!-- Clasificación Financiera -->
+                <div>
+                    <label for="classification" class="block text-sm font-medium text-gray-700 mb-1">
+                        Clasificación Financiera
+                    </label>
+                    <select id="classification" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Seleccionar...</option>
+                        <option value="Ingreso">Ingreso</option>
+                        <option value="Egreso">Egreso</option>
+                        <option value="No_Financiero">No Financiero</option>
+                    </select>
+                </div>
+
+                <!-- Tipo Operación -->
+                <div>
+                    <label for="operationType" class="block text-sm font-medium text-gray-700 mb-1">
+                        Tipo de Operación
+                    </label>
+                    <select id="operationType" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Seleccionar...</option>
+                        <option value="Transferencia">Transferencia</option>
+                        <option value="Pago">Pago</option>
+                        <option value="Compra">Compra</option>
+                        <option value="Depósito">Depósito</option>
+                    </select>
+                </div>
+
+                <!-- Entidad Bancaria -->
+                <div>
+                    <label for="entityBank" class="block text-sm font-medium text-gray-700 mb-1">
+                        Entidad Bancaria
+                    </label>
+                    <input type="text" id="entityBank" required placeholder="Ej: Banco Santander, BBVA, etc."
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Monto Numérico -->
+                <div>
+                    <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">
+                        Monto Numérico (CLP)
+                    </label>
+                    <input type="number" id="amount" required min="0" step="0.01" placeholder="Ej: 100000"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Contraparte -->
+                <div>
+                    <label for="counterparty" class="block text-sm font-medium text-gray-700 mb-1">
+                        Contraparte
+                    </label>
+                    <input type="text" id="counterparty" required placeholder="Nombre de la contraparte"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Descripción -->
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-1">
+                        Descripción
+                    </label>
+                    <input type="text" id="description" required placeholder="Descripción del movimiento"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Fecha y Hora -->
+                <div>
+                    <label for="dateHour" class="block text-sm font-medium text-gray-700 mb-1">
+                        Fecha y Hora
+                    </label>
+                    <input type="datetime-local" id="dateHour" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Tipo Financiero -->
+                <div>
+                    <label for="financialType" class="block text-sm font-medium text-gray-700 mb-1">
+                        Tipo Financiero
+                    </label>
+                    <select id="financialType" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Seleccionar...</option>
+                        <option value="Financiero">Financiero</option>
+                        <option value="No_Financiero">No Financiero</option>
+                    </select>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="flex items-center justify-end gap-3 pt-4 border-t">
+                    <button type="button" id="cancelBtn"
+                        class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        Cancelar
+                    </button>
+                    <button type="submit" id="saveBtn"
+                        class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center gap-2">
+                        <svg id="saveIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4">
+                            </path>
+                        </svg>
+                        <span id="saveText">Guardar Movimiento</span>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- Script de Lógica y Cálculos -->
@@ -619,6 +753,186 @@
         const itemsPerPage = 10;
         let currentPage = 1;
 
+        // URL del webhook para guardar movimientos
+        const MOVEMENT_WEBHOOK_URL = 'http://localhost:5678/webhook-test/nuevo-movimiento';
+
+        // Estado del modal y formulario
+        let isSaving = false;
+
+        // Función para mostrar el modal de nuevo movimiento
+        function openNewMovementModal() {
+            document.getElementById('newMovementModal').classList.remove('hidden');
+            document.getElementById('newMovementModal').classList.add('flex');
+
+            // Configurar fecha y hora actuales en el campo datetime-local
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('dateHour').value = now.toISOString().slice(0, 16);
+        }
+
+        // Función para cerrar el modal de nuevo movimiento
+        function closeNewMovementModal() {
+            if (isSaving) return; // Prevenir cierre durante guardado
+
+            document.getElementById('newMovementModal').classList.add('hidden');
+            document.getElementById('newMovementModal').classList.remove('flex');
+
+            // Limpiar formulario
+            document.getElementById('newMovementForm').reset();
+        }
+
+        // Función para enviar nuevo movimiento al webhook
+        async function saveNewMovement(event) {
+            event.preventDefault();
+
+            if (isSaving) return;
+            isSaving = true;
+
+            const saveBtn = document.getElementById('saveBtn');
+            const saveText = document.getElementById('saveText');
+            const saveIcon = document.getElementById('saveIcon');
+
+            // Cambiar estado visual del botón a "Guardando..."
+            saveBtn.disabled = true;
+            saveText.textContent = 'Guardando...';
+            saveIcon.classList.add('animate-spin');
+
+            try {
+                // Recopilar datos del formulario
+                const formData = {
+                    Clasificacion_Financiera: document.getElementById('classification').value,
+                    Tipo_Operacion: document.getElementById('operationType').value,
+                    Entidad_Bancaria: document.getElementById('entityBank').value,
+                    Monto_Numerico: parseFloat(document.getElementById('amount').value),
+                    Contraparte: document.getElementById('counterparty').value,
+                    Descripcion: document.getElementById('description').value,
+                    FechaHora: document.getElementById('dateHour').value,
+                    Tipo_Financiero: document.getElementById('financialType').value
+                };
+
+                // Enviar al webhook usando fetch
+                const response = await fetch(MOVEMENT_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error al guardar: ${response.statusText}`);
+                }
+
+                // Cerrar modal y limpiar formulario
+                closeNewMovementModal();
+
+                // Mostrar notificación de éxito
+                showSuccessNotification('Movimiento guardado correctamente');
+
+                // Refrescar datos del dashboard
+                refreshDashboardData(formData);
+
+            } catch (error) {
+                console.error('Error al guardar movimiento:', error);
+                showErrorNotification('Error al guardar el movimiento: ' + error.message);
+            } finally {
+                // Restaurar estado visual del botón
+                isSaving = false;
+                saveBtn.disabled = false;
+                saveText.textContent = 'Guardar Movimiento';
+                saveIcon.classList.remove('animate-spin');
+            }
+        }
+
+        // Función para mostrar notificación de éxito
+        function showSuccessNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 fade-in';
+            notification.textContent = message;
+
+            // Limpiar notificaciones previas si existen
+            const existingNotifications = document.querySelectorAll('.notification-success');
+            existingNotifications.forEach(n => n.remove());
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+
+        // Función para mostrar notificación de error
+        function showErrorNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 fade-in';
+            notification.textContent = message;
+
+            // Limpiar notificaciones previas si existen
+            const existingNotifications = document.querySelectorAll('.notification-error');
+            existingNotifications.forEach(n => n.remove());
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // Función para refrescar datos del dashboard después de agregar movimiento
+        function refreshDashboardData(newMovement) {
+            // Agregar nuevo movimiento a la lista principal
+            finanzasData.unshift(newMovement);
+
+            // Recalcular KPIs con todos los datos
+            const kpiData = calculateKPIs(finanzasData);
+
+            // Actualizar elementos del DOM
+            document.getElementById('total-ingresos').textContent = formatCLP(kpiData.totalIngresos);
+            document.getElementById('total-egresos').textContent = formatCLP(kpiData.totalEgresos);
+            const balanceEl = document.getElementById('balance-neto');
+            balanceEl.textContent = formatCLP(kpiData.balanceNeto);
+
+            // Actualizar color del balance según clasificación del nuevo movimiento
+            setBalanceCardColor(kpiData.balanceNeto);
+
+            // Colorear KPIs según clasificación
+            if (kpiData.totalIngresos > 0) {
+                document.querySelector('#kpi-section article:nth-child(1) .flex.items-center.justify-between.mb-4 svg').className =
+                    'w-8 h-8 text-green-500 fill-current';
+            } else {
+                document.querySelector('#kpi-section article:nth-child(1) .flex.items-center.justify-between.mb-4 svg').className =
+                    'w-8 h-8 text-gray-400 fill-current';
+            }
+
+            if (kpiData.totalEgresos > 0) {
+                document.querySelector('#kpi-section article:nth-child(2) .flex.items-center.justify-between.mb-4 svg').className =
+                    'w-8 h-8 text-red-500 fill-current';
+            } else {
+                document.querySelector('#kpi-section article:nth-child(2) .flex.items-center.justify-between.mb-4 svg').className =
+                    'w-8 h-8 text-gray-400 fill-current';
+            }
+
+            // Refrescar filtros dinámicos (entidades y tipos de operación)
+            populateEntityFilter();
+            populateTypeFilter();
+
+            // Actualizar gráficos con datos completos
+            updateCharts(finanzasData);
+
+            // Actualizar contador total de movimientos
+            document.getElementById('total-movements').textContent = finanzasData.length;
+
+            // Re-renderizar la tabla con los filtros actuales para mostrar el nuevo movimiento
+            handleFilters(searchInput.value, entityFilter.value, typeFilter.value);
+        }
+
+        // Variables globales para modal de nuevo movimiento
+        let newMovementModalOpen = false;
+
         // Manejar cambios en filtros
         function handleFilters(searchQuery, entityFilter, typeFilter) {
             filteredData = filterAndSortData(finanzasData, searchQuery, entityFilter, typeFilter);
@@ -668,8 +982,42 @@
             nextPageBtn.disabled = currentPage >= totalPages || totalPages <= 1;
         }
 
+        // Configurar event listeners para el modal de nuevo movimiento y formulario
+        function setupNewMovementListeners() {
+            // Abrir modal desde botón principal
+            const newMovementBtn = document.getElementById('newMovementBtn');
+            newMovementBtn.addEventListener('click', openNewMovementModal);
+
+            // Cerrar modal con botón X
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            closeModalBtn.addEventListener('click', closeNewMovementModal);
+
+            // Cerrar modal con botón cancelar
+            const cancelBtn = document.getElementById('cancelBtn');
+            cancelBtn.addEventListener('click', () => {
+                if (isSaving) return;
+                closeNewMovementModal();
+            });
+
+            // Cerrar modal al hacer click fuera del contenido (en el overlay)
+            const modalOverlay = document.getElementById('newMovementModal');
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay && !isSaving) {
+                    closeNewMovementModal();
+                }
+            });
+
+            // Enviar formulario al guardar
+            const newMovementForm = document.getElementById('newMovementForm');
+            newMovementForm.addEventListener('submit', saveNewMovement);
+        }
+
         // Ejecutar al cargar la página
-        document.addEventListener('DOMContentLoaded', initDashboard);
+        document.addEventListener('DOMContentLoaded', () => {
+            initDashboard();
+            setupEventListeners();
+            setupNewMovementListeners();
+        });
     </script>
 </body>
 
