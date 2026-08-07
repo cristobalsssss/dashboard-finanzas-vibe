@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Financiero - Control y Visualización</title>
+    <title>Dashboard Financiero - Business Intelligence</title>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -15,10 +15,10 @@
     <!-- PapaParse para procesar CSV en el navegador -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
-    <!-- SheetJS CDN para manejo de hojas de cálculo -->
+    <!-- SheetJS CDN para exportar a Excel ($0 costo) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-    <!-- html2pdf CDN para exportación a PDF -->
+    <!-- html2pdf CDN para exportar a PDF ($0 costo) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <!-- Google Fonts -->
@@ -71,46 +71,146 @@
             transition: transform 0.2s ease;
         }
     </style>
-  <script type="module" crossorigin src="/assets/index-BE03dYU_.js"></script>
+  <script type="module" crossorigin src="/assets/index-CCSnLTa7.js"></script>
 </head>
 
 <body class="font-sans antialiased">
 
-    <!-- Contenedor Principal -->
-    <div class="min-h-screen p-4 md:p-8 max-w-7xl mx-auto">
+    <!-- Contenedor Principal exportable -->
+    <div id="dashboard-content" class="min-h-screen p-4 md:p-8 max-w-7xl mx-auto">
 
         <!-- Encabezado Moderno -->
-        <header class="mb-8 fade-in">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-                Dashboard Financiero
-            </h1>
-            <p class="text-gray-600 text-lg">Control y visualización de movimientos</p>
+        <header class="mb-8 fade-in flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                    Dashboard Financiero
+                </h1>
+                <p class="text-gray-600 text-lg">Business Intelligence & Gestor de Movimientos</p>
+                <div class="mt-3 flex items-center gap-3">
+                    <span
+                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        Datos actualizados en tiempo real desde Google Sheets
+                    </span>
+                </div>
+            </div>
 
-            <!-- Indicador de estado -->
-            <div class="mt-4 flex items-center gap-3">
-                <span
-                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    Datos actualizados en tiempo real desde Google Sheets
-                </span>
-
-                <!-- Botón Nuevo Movimiento -->
+            <!-- Botón Acción Principal -->
+            <div>
                 <button id="newMovementBtn"
-                    class="ml-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
-                    Nuevo Movimiento
+                    + Nuevo Movimiento
                 </button>
             </div>
         </header>
 
-        <!-- Tarjetas KPI -->
-        <section id="kpi-section" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 fade-in">
+        <!-- BARRA DE FILTROS Y CONTROLES BI -->
+        <section id="bi-filter-bar" class="mb-8 bg-white rounded-xl shadow-sm border border-gray-100 p-6 fade-in">
+            <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
+                <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+                        </path>
+                    </svg>
+                    Filtros y Análisis BI
+                </h2>
+
+                <!-- Botones de Exportación -->
+                <div class="flex items-center gap-2">
+                    <button id="exportExcelBtn"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 text-white text-xs md:text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                        📊 Exportar Excel
+                    </button>
+                    <button id="exportPdfBtn"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-600 text-white text-xs md:text-sm font-medium rounded-lg hover:bg-rose-700 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        📄 Descargar PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- Controles Interactivos -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <!-- Búsqueda textual -->
+                <div class="lg:col-span-2">
+                    <label for="searchInput" class="block text-xs font-medium text-gray-500 mb-1">Buscar</label>
+                    <input type="text" id="searchInput" placeholder="Descripción o contraparte..."
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Fecha Desde -->
+                <div>
+                    <label for="startDate" class="block text-xs font-medium text-gray-500 mb-1">Fecha Desde</label>
+                    <input type="date" id="startDate"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Fecha Hasta -->
+                <div>
+                    <label for="endDate" class="block text-xs font-medium text-gray-500 mb-1">Fecha Hasta</label>
+                    <input type="date" id="endDate"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Entidad Bancaria -->
+                <div>
+                    <label for="entityFilter" class="block text-xs font-medium text-gray-500 mb-1">Entidad Bancaria</label>
+                    <select id="entityFilter"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Todas las entidades</option>
+                    </select>
+                </div>
+
+                <!-- Clasificación Financiera -->
+                <div>
+                    <label for="classificationFilter" class="block text-xs font-medium text-gray-500 mb-1">Clasificación</label>
+                    <select id="classificationFilter"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Todas las clasificaciones</option>
+                        <option value="Ingreso">Ingreso</option>
+                        <option value="Egreso">Egreso</option>
+                        <option value="No_Financiero">No Financiero</option>
+                    </select>
+                </div>
+
+                <!-- Tipo Operación -->
+                <div>
+                    <label for="typeFilter" class="block text-xs font-medium text-gray-500 mb-1">Tipo Operación</label>
+                    <select id="typeFilter"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Todos los tipos</option>
+                    </select>
+                </div>
+
+                <!-- Botón Limpiar Filtros -->
+                <div class="sm:col-span-2 md:col-span-3 lg:col-span-6 flex justify-end pt-2">
+                    <button id="resetFiltersBtn"
+                        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs font-medium focus:outline-none focus:ring-2 focus:ring-gray-400">
+                        🔄 Limpiar Filtros
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tarjetas KPI (4 Columnas Responsivas) -->
+        <section id="kpi-section" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 fade-in">
             <!-- Total Ingresos -->
             <article
                 class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-300">
@@ -152,58 +252,60 @@
                 </div>
                 <p id="balance-neto" class="text-3xl font-bold text-gray-900">$0</p>
             </article>
+
+            <!-- Total Movimientos (4ta Tarjeta KPI) -->
+            <article
+                class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-300 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold text-gray-700">Total Movimientos</h2>
+                        <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                            </path>
+                        </svg>
+                    </div>
+                    <p id="total-movimientos" class="text-3xl font-bold text-gray-900">0</p>
+                </div>
+                <p id="rango-fechas-kpi" class="text-xs font-medium text-gray-500 mt-2 truncate">
+                    Sin registros
+                </p>
+            </article>
         </section>
 
-        <!-- Gráfico de Distribución y Tabla -->
-        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 fade-in">
-
-            <!-- Gráfico de Egresos por Entidad Bancaria -->
-            <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <!-- PANEL DE GRÁFICOS ANALYTICS -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 fade-in mb-8">
+            <!-- Gráfico 1: Distribución de Egresos por Entidad Bancaria -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                 <h2 class="text-lg font-semibold text-gray-700 mb-4">Distribución de Egresos por Entidad</h2>
                 <div class="relative h-64 md:h-80 w-full">
                     <canvas id="expenseChart"></canvas>
                 </div>
             </div>
 
-            <!-- Resumen Adicional -->
-            <div
-                class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col justify-center items-center text-center">
-                <h2 class="text-lg font-semibold text-gray-700 mb-4 w-full">Total Movimientos</h2>
-                <p id="total-movements" class="text-5xl font-bold text-gray-900 mb-2">0</p>
-                <span class="text-sm text-gray-500">Transacciones registradas</span>
+            <!-- Gráfico 2: Evolución Temporal Comparativa (Ingresos vs Egresos por Mes) -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Evolución Temporal Comparativa</h2>
+                <div class="relative h-64 md:h-80 w-full">
+                    <canvas id="monthlyChart"></canvas>
+                </div>
             </div>
         </section>
 
-        <!-- Sección de Filtros y Tabla -->
-        <section class="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden fade-in">
+        <!-- SECCIÓN DE TABLA DE MOVIMIENTOS Y PAGINACIÓN -->
+        <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden fade-in">
             <div
                 class="p-6 border-b border-gray-100 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-                <h2 class="text-lg font-semibold text-gray-700 w-full md:w-auto">Últimos Movimientos</h2>
-
-                <!-- Controles de Filtro -->
-                <div class="flex flex-wrap gap-3 w-full md:w-auto">
-                    <!-- Búsqueda por Descripción o Contraparte -->
-                    <input type="text" id="searchInput" placeholder="Buscar descripción o contraparte..."
-                        class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full md:w-64">
-
-                    <!-- Filtro por Entidad Bancaria -->
-                    <select id="entityFilter"
-                        class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full md:w-48">
-                        <option value="">Todas las entidades</option>
-                    </select>
-
-                    <!-- Filtro por Tipo de Operación -->
-                    <select id="typeFilter"
-                        class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full md:w-48">
-                        <option value="">Todos los tipos</option>
-                    </select>
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-800">Últimos Movimientos</h2>
+                    <p class="text-xs text-gray-500 mt-1">Transacciones filtradas en tiempo real</p>
                 </div>
-            </div>
 
-            <!-- Contador de resultados -->
-            <div class="px-6 py-3 bg-gray-50 border-b border-gray-100 text-sm text-gray-600">
-                Mostrando <span id="display-start" class="font-medium">1</span> al <span id="display-end"
-                    class="font-medium">10</span> de <span id="total-results" class="font-medium">0</span> resultados
+                <!-- Contador dinámico de resultados -->
+                <div class="px-4 py-2 bg-gray-50 rounded-lg text-sm text-gray-600 border border-gray-100">
+                    Mostrando <span id="display-start" class="font-medium text-gray-900">1</span> a <span id="display-end"
+                        class="font-medium text-gray-900">10</span> de <span id="total-results" class="font-medium text-gray-900">0</span> resultados
+                </div>
             </div>
 
             <div class="overflow-x-auto">
@@ -216,6 +318,8 @@
                                 Entidad Bancaria</th>
                             <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Tipo_Operacion</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Clasificación</th>
                             <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Monto</th>
                             <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -238,11 +342,11 @@
                 </div>
                 <div class="flex gap-2">
                     <button id="prevPage"
-                        class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="px-3.5 py-1.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
                         Anterior
                     </button>
                     <button id="nextPage"
-                        class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="px-3.5 py-1.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
                         Siguiente
                     </button>
                 </div>
@@ -267,7 +371,7 @@
                 </button>
             </div>
 
-            <!-- Formulario -->
+            <!-- Formulario con 8 Campos Obligatorios -->
             <form id="newMovementForm" class="space-y-4">
                 <!-- Clasificación Financiera -->
                 <div>

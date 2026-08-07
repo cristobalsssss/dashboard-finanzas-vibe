@@ -1,88 +1,64 @@
-# ESPECIFICACIÓN DE PRODUCTO (PRD): DASHBOARD FINANCIERO WEB
+# ESPECIFICACIÓN DE PRODUCTO (PRD): DASHBOARD FINANCIERO WEB BI
 
 ## 1. Visión General del Producto
-Construir una interfaz web responsiva, moderna y limpia para un Dashboard Financiero. El objetivo principal es visualizar de forma clara los datos de ingresos, egresos y balance provenientes de la planilla de Google Sheets ("Finanzas_Dashboard_Prueba"), permitiendo al usuario monitorear sus finanzas personales o de negocio en tiempo real o simulado.
+Proporcionar una plataforma web moderna, modular e interactiva para el monitoreo y gestión de finanzas personales o de negocio. La aplicación consume datos en tiempo real desde la planilla Google Sheets ("Finanzas_Dashboard_Prueba") y permite ingresar nuevos registros sincronizados bidireccionalmente mediante automatización en n8n.
 
 ---
 
-## 2. Requerimientos de la Interfaz de Usuario (UI/UX)
+## 2. Requerimientos Funcionales y de Interfaz (UI/UX)
+
+### A0. Regla Global de Filtrado Base (Exclusión de No Financieros)
+- **Criterio de Negocio**: Las transacciones catalogadas con `Clasificacion_Financiera == "no_financiero"` o `Tipo_Financiero == "No_Financiero"` no forman parte de la analítica financiera del Dashboard.
+- **Alcance**:
+  1. **Tarjetas KPI**: Excluidos del cálculo de Total Ingresos, Total Egresos, Balance Neto y Contador de Total Movimientos.
+  2. **Gráficos**: Excluidos del Gráfico de Egresos por Banco y del Gráfico de Evolución Temporal.
+  3. **Tabla de Movimientos**: No deben mostrarse en el listado ni afectar la paginación.
 
 ### A. Encabezado (Header)
-- **Título**: Dashboard Financiero
-- **Subtítulo**: Control y visualización de movimientos
-- Indicador visual de estado de actualización de datos.
+- Título principal: **Dashboard Financiero**
+- Subtítulo: **Business Intelligence & Gestor de Movimientos**
+- Estado visual de carga (cargando datos / datos actualizados).
+- Botón de Acción Principal: `+ Nuevo Movimiento` (Abre el modal de ingreso manual).
 
-### B. Tarjetas de Resumen (KPI Cards)
-Ubicadas en la parte superior de la pantalla principal en una cuadrícula de 3 columnas:
-1. **Total Ingresos**: Muestra la suma total de montos donde `Clasificacion_Financiera` == "Ingreso". Estilo visual en tono verde positivo.
-2. **Total Egresos**: Muestra la suma total de montos donde `Clasificacion_Financiera` == "Egreso". Estilo visual en tono rojo/naranja de alerta.
-3. **Balance Neto**: Muestra el resultado de `(Total Ingresos - Total Egresos)`. Formato destacado; si es positivo se muestra neutro/verde, si es negativo resalta en rojo.
+### B. Barra de Filtros & Business Intelligence (BI)
+Panel superior interactivo compuesto por:
+1. **Filtro Rango de Fechas**:
+   - Campo `Fecha Desde` (input date).
+   - Campo `Fecha Hasta` (input date).
+2. **Filtros Selectivos (Dropdowns)**:
+   - `Entidad Bancaria`: Menú autogenerado con los valores únicos del conjunto de datos.
+   - `Clasificación Financiera`: Opciones (Todos, Ingreso, Egreso, No_Financiero).
+   - `Tipo Operación`: Opciones (Todos, Transferencia, Pago, Compra, Depósito).
+3. **Acciones de Filtro**:
+   - Botón `Limpiar Filtros`: Restablece todos los campos a su estado por defecto y recarga la vista global.
+4. **Módulo de Exportación de Reportes ($0 Costo)**:
+   - Botón `📊 Exportar Excel`: Genera y descarga un archivo `.xlsx` con los datos filtrados actualmente en la tabla mediante SheetJS.
+   - Botón `📄 Descargar PDF`: Genera un informe en PDF con la vista actual de tarjetas, gráficos y tabla utilizando `html2pdf.js`.
 
-### C. Visualización Gráfica
-1. **Gráfico de Distribución de Egresos por Entidad Bancaria**:
-   - **Tipo**: Gráfico de Torta (Pie Chart) o Anillo (Doughnut Chart).
-   - **Datos**: Agrupación del `Monto_Numerico` acumulado por cada `Entidad_Bancaria` (por ejemplo: Santander, ZumPago, UniRed, etc.) considerando solo registros de tipo "Egreso".
-   - **Interactividad**: Tooltip interactivo que muestre la entidad y el monto correspondiente al pasar el cursor.
 
-### D. Tabla de Últimos Movimientos
-- **Ubicación**: Sección inferior del dashboard.
-- **Columnas a desplegar**:
-  1. Fecha y Hora (`FechaHora`)
-  2. Entidad / Pasarela (`Entidad_Bancaria`)
-  3. Tipo de Operación (`Tipo_Operacion`)
-  4. Monto (`Monto_Numerico` con formato de moneda `$`)
-  5. Descripción / Glosa (`Descripcion`)
-- **Funcionalidades esperadas**:
-  - Orden predeterminado: Más reciente a más antiguo según `FechaHora`.
-  - Etiqueta o badge de color según si el movimiento es "Ingreso" o "Egreso".
 
----
+### C. Tarjetas de Resumen (KPI Cards)
+Cuadrícula de 3 columnas responsivas:
+1. **Total Ingresos**: Suma acumulada de movimientos con `Clasificacion_Financiera == "Ingreso"`. Color verde positivo.
+2. **Total Egresos**: Suma acumulada de movimientos con `Clasificacion_Financiera == "Egreso"`. Color rojo/naranja de alerta.
+3. **Balance Neto**: Cálculo de `(Total Ingresos - Total Egresos)`. Destacado visualmente (verde si es mayor o igual a 0, rojo si es negativo).
+4. **Total Movimientos**: Suma acumulada de todos los movimientos. Agregando la fecha desde y hasta
 
-## 3. Modelo de Datos de Entrada (Estructura Google Sheets)
+### D. Panel de Gráficos (Analytics Avanzado)
+1. **Gráfico 1 (Torta/Donut - Distribución de Egresos)**: Agrupa el total de egresos por cada `Entidad_Bancaria`.
+2. **Gráfico 2 (Barras/Líneas - Evolución Temporal)**: Compara la evolución de *Ingresos vs. Egresos* agrupados por mes cronológico.
 
-Los datos procesados por la aplicación mantendrán la siguiente estructura de 8 campos:
-1. `Clasificacion_Financiera`: ("Ingreso" | "Egreso" | "no_financiero")
-2. `Tipo_Operacion`: ("Transferencia" | "Pago" | "Compra" | "Desconocido")
-3. `Entidad_Bancaria`: Nombre del banco, pasarela o entidad
-4. `Monto_Numerico`: Valor numérico de la transacción
-5. `Contraparte`: Nombre de la persona u organización de origen/destino
-6. `Descripcion`: Detalle, concepto o glosa del movimiento
-7. `FechaHora`: Formato "YYYY-MM-DD HH:mm"
-8. `Tipo_Financiero`: ("Financiero" | "No_Financiero" | "Error")
+### E. Tabla de Movimientos y Paginación
+- Muestra el listado detallado de transacciones ordenado en forma cronológica inversa.
+- **Columnas**: Fecha, Entidad Bancaria, Tipo Operación, Clasificación, Monto ($), Contraparte y Descripción.
+- **Paginación**: Límite estricto de 10 filas por página con botones `Anterior` y `Siguiente`.
+- **Contador Dinámico**: Leyenda informativa con el formato `"Mostrando X a Y de Z resultados"`.
 
----
-
-## 4. Lineamientos de Arquitectura y Diseño (Guardarraíles)
-- **Diseño**: Minimalista, limpio, adaptable a escritorio y dispositivos móviles (Mobile-First / Responsivo con Tailwind CSS).
-- **Librerías**: Componentes visuales responsivos con Tailwind CSS y gráficos con Chart.js / Recharts.
-- **Datos de prueba (Mock Data)**: El agente deberá crear un conjunto inicial de datos simulados en formato JSON basados en la estructura anterior para verificar el funcionamiento de la interfaz gráfica de forma inmediata.
-
----
-
-## 5. Criterios de Aceptación (Definition of Done)
-1. El proyecto compila y se ejecuta en un servidor local (por ejemplo, Vite) sin errores.
-2. Se visualizan correctamente las 3 tarjetas KPI con los totales calculados adecuadamente.
-3. El gráfico de egresos refleja correctamente la distribución por entidad bancaria.
-4. La tabla muestra los campos requeridos en formato legible con diseño limpio.
-
----
-
-## Datos de Ejemplo (Google Sheets)
-
-A continuación se presentan filas reales tomadas de la planilla para usar como base del archivo mock:
-
-Clasificacion_Financiera	Tipo_Operacion	Entidad_Bancaria	Monto_Numerico	Contraparte	Descripcion	FechaHora	Tipo_Financiero
-Egreso	Transferencia	Banco Security	250000	Erick Soto	Mueble entrada	2026-07-10 19:43	Financiero
-Egreso	Compra	ZumPago	26480	Mundo Pacífico	Servicio Internet	2026-07-12 10:15	Financiero
-Ingreso	Transferencia	Banco Santander	850000	Empresa Servicios SpA	Sueldo / Honorarios	2026-07-01 9:00	Financiero
-Egreso	Compra	Transbank	45900	Lider Supermercados	Mercadería del mes	2026-07-03 15:30	Financiero
-Egreso	Compra	UniRed	18200	Enel Distribución	Cuenta Electricidad	2026-07-05 11:20	Financiero
-Egreso	Compra	Webpay	12500	Aguas Andinas	Cuenta Agua	2026-07-06 8:45	Financiero
-Ingreso	Transferencia	BancoEstado	120000	Juan Perez	Devolución préstamo	2026-07-08 14:10	Financiero
-Egreso	Compra	Banco Security	8990	Netflix	Suscripción mensual	2026-07-09 22:00	Financiero
-Egreso	Compra	Banco Santander	15400	Copec	Combustible vehículo	2026-07-11 18:05	Financiero
-Egreso	Compra	ZumPago	32000	Claro Chile	Plan Telefonía	2026-07-14 16:50	Financiero
-Ingreso	Transferencia	Banco Chile	45000	Fundación Reembolsos	Reembolso médico	2026-07-15 12:30	Financiero
-Egreso	Compra	Transbank	68900	Farmacias Ahumada	Medicamentos	2026-07-16 17:15	Financiero
-Egreso	Compra	UniRed	22000	Metrogas	Gas domicilio	2026-07-18 10:00	Financiero
-Ingreso	Transferencia	Banco Falabella	50000	Carmen Hidalgo	Farmacia Devolucion	2026-07-19 10:00	Financiero
+### F. Modal de Ingreso Manual de Movimientos
+Ventana emergente gatillada por el botón `+ Nuevo Movimiento`:
+- **Formulario**: Contiene los 8 campos requeridos (`Clasificacion_Financiera`, `Tipo_Operacion`, `Entidad_Bancaria`, `Monto_Numerico`, `Contraparte`, `Descripcion`, `FechaHora`, `Tipo_Financiero`).
+- **Acción Guardar**: Al presionar `Guardar Movimiento`:
+  1. Cambia el botón a estado "Guardando...".
+  2. Ejecuta una petición `POST` al Webhook de n8n: `http://localhost:5678/webhook-test/nuevo-movimiento`.
+  3. Maneja errores con `try/catch` (evitando bloqueos por `Failed to fetch`).
+  4. Al confirmar éxito, cierra el modal, limpia los campos, muestra notificación y refresca los datos del Dashboard.
