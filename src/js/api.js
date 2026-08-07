@@ -7,8 +7,8 @@
 export const SHEET_CSV_URL =
     'https://docs.google.com/spreadsheets/d/e/2PACX-1vQmY2cIdZKipZcic_s61HaLZ3IoPVPoPQORK9Xllap6fqnrpjr3vpXEqEkgEuVpgx034HhJvBXAmBeF/pub?output=csv';
 
-// URL del fallback de datos locales (sirve tanto en dev como en Vercel desde /public)
-export const FALLBACK_JSON_URL = './data/mock_finanzas.json';
+// URL del fallback de datos locales (public/data/ → sirve como /data/ en Vite y Vercel)
+export const FALLBACK_JSON_URL = '/data/mock_finanzas.json';
 
 // URL del Webhook para guardar movimientos en n8n
 export const MOVEMENT_WEBHOOK_URL = 'http://localhost:5678/webhook-test/nuevo-movimiento';
