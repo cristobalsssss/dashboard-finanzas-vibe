@@ -1,0 +1,142 @@
+[
+  {
+    "Clasificacion_Financiera": "Egreso",
+    "Tipo_Operacion": "Transferencia",
+    "Entidad_Bancaria": "Banco Security",
+    "Monto_Numerico": 250000,
+    "Contraparte": "Erick Soto",
+    "Descripcion": "Mueble entrada",
+    "FechaHora": "2026-07-10 19:43",
+    "Tipo_Financiero": "Financiero"
+  },
+  {
+    "Clasificacion_Financiera": "Egreso",
+    "Tipo_Operacion": "Compra",
+    "Entidad_Bancaria": "ZumPago",
+    "Monto_Numerico": 26480,
+    "Contraparte": "Mundo Pacífico",
+    "Descripcion": "Servicio Internet",
+    "FechaHora": "2026-07-12 10:15",
+    "Tipo_Financiero": "Financiero"
+  },
+  {
+    "Clasificacion_Financiera": "Ingreso",
+    "Tipo_Operacion": "Transferencia",
+    "Entidad_Bancaria": "Banco Santander",
+    "Monto_Numerico": 850000,
+    "Contraparte": "Empresa Servicios SpA",
+    "Descripcion": "Sueldo / Honorarios",
+    "FechaHora": "2026-07-01 09:00",
+    "Tipo_Financiero": "Financiero"
+  },
+  {
+    "Clasificacion_Financiera": "Egreso",
+    "Tipo_Operacion": "Compra",
+    "Entidad_Bancaria": "Transbank",
+    "Monto_Numerico": 45900,
+    "Contraparte": "Lider Supermercados",
+    "Descripcion": "Mercadería del mes",
+    "FechaHora": "2026-07-03 15:30",
+    "Tipo_Financiero": "Financiero"
+  },
+  {
+    "Clasificacion_Financiera": "Egreso",
+    "Tipo_Operacion": "Compra",
+    "Entidad_Bancaria": "UniRed",
+    "Monto_Numerico": 18200,
+    "Contraparte": "Enel Distribución",
+    "Descripcion": "Cuenta Electricidad",
+    "FechaHora": "2026-07-05 11:20",
+    "Tipo_Financiero": "Financiero"
+  },
+  {
+    "Clasificacion_Financiera": "Egreso",
+    "Tipo_Operacion": "Compra",
+    "Entidad_Bancaria": "Webpay",
+    "Monto_Numerico": 12500,
+    "Contraparte": "Aguas Andinas",
+    "Descripcion": "Cuenta Agua",
+    "FechaHora": "2026-07-06 08:45",
+    "Tipo_Financiero": "Financiero"
+  },
+  {
+    "Clasificacion_Financiera": "Ingreso",
+    "Tipo_Operacion": "Transferencia",
+    "Entidad_Bancaria": "BancoEstado",
+    "Monto_Numerico": 120000,
+    "Contraparte": "Juan Perez",
+    "Descripcion": "Devolución préstamo",
+    "FechaHora": "2026-07-08 14:10",
+    "Tipo_Financiero": "Financiero"
+  },
+  {
+    "Clasificacion_Financiera": "Egreso",
+    "Tipo_Operacion": "Compra",
+    "Entidad_Bancaria": "Banco Security",
+    "Monto_Numerico": 8990,
+    "Contraparte": "Netflix",
+    "Descripcion": "Suscripción mensual",
+    "FechaHora": "2026-07-09 22:00",
+    "Tipo_Financiero": "Financiero"
+  },
+  {
+    "Clasificacion_Financiera": "Egreso",
+    "Tipo_Operacion": "Compra",
+    "Entidad_Bancaria": "Banco Santander",
+    "Monto_Numerico": 15400,
+    "Contraparte": "Copec",
+    "Descripcion": "Combustible vehículo",
+    "FechaHora": "2026-07-11 18:05",
+    "Tipo_Financiero": "Financiero"
+  },
+  {
+    "Clasificacion_Financiera": "Egreso",
+    "Tipo_Operacion": "Compra",
+    "Entidad_Bancaria": "ZumPago",
+    "Monto_Numerico": 32000,
+    "Contraparte": "Claro Chile",
+    "Descripcion": "Plan Telefonía",
+    "FechaHora": "2026-07-14 16:50",
+    "Tipo_Financiero": "Financiero"
+  },
+  {
+    "Clasificacion_Financiera": "Ingreso",
+    "Tipo_Operacion": "Transferencia",
+    "Entidad_Bancaria": "Banco Chile",
+    "Monto_Numerico": 45000,
+    "Contraparte": "Fundación Reembolsos",
+    "Descripcion": "Reembolso médico",
+    "FechaHora": "2026-07-15 12:30",
+    "Tipo_Financiero": "Financiero"
+  },
+  {
+    "Clasificacion_Financiera": "Egreso",
+    "Tipo_Operacion": "Compra",
+    "Entidad_Bancaria": "Transbank",
+    "Monto_Numerico": 68900,
+    "Contraparte": "Farmacias Ahumada",
+    "Descripcion": "Medicamentos",
+    "FechaHora": "2026-07-16 17:15",
+    "Tipo_Financiero": "Financiero"
+  },
+  {
+    "Clasificacion_Financiera": "Egreso",
+    "Tipo_Operacion": "Compra",
+    "Entidad_Bancaria": "UniRed",
+    "Monto_Numerico": 22000,
+    "Contraparte": "Metrogas",
+    "Descripcion": "Gas domicilio",
+    "FechaHora": "2026-07-18 10:00",
+    "Tipo_Financiero": "Financiero"
+  },
+  {
+    "Clasificacion_Financiera": "Ingreso",
+    "Tipo_Operacion": "Transferencia",
+    "Entidad_Bancaria": "Banco Falabella",
+    "Monto_Numerico": 50000,
+    "Contraparte": "Carmen Hidalgo",
+    "Descripcion": "Farmacia Devolucion",
+    "FechaHora": "2026-07-19 10:00",
+    "Tipo_Financiero": "Financiero"
+  }
+]
