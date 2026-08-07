@@ -1,0 +1,10 @@
+[33m6af7fdb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Hito 4C - Paso 1: Filtro de rango de fechas y gráfico mensual funcionando OK
+[33m0bf59b5[m[33m ([m[1;31morigin/main[m[33m)[m Hito 12 OK: Modal Web para ingreso manual de movimientos integrado con n8n
+[33md0a88d6[m Estado limpio pre-experimento Modal 64K
+[33mb6ab12c[m Hito 11: Agregado modal de nuevo movimiento (pendiente fix de evento y script)
+[33mda08ba9[m Hito 4A: Despliegue exitoso en Vercel (Version Solo Lectura funcional)
+[33ma69a086[m Checkpoint: Hito 3 completado: Agregando la Contraparte a movimientos
+[33mda2bc9c[m Checkpoint: Hito 3 completado: Conexión dinámica a Google Sheets en tiempo real
+[33mccab20e[m Checkpoint: H2: Guardado Index Ok despues de filtros
+[33m76f4a55[m Checkpoint: Guardado Index Ok antes de filtros
+[33m0492536[m Checkpoint: Guardado de avance en Vibe Coding
