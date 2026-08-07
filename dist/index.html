@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Financiero - Control y Visualización</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js CDN para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- PapaParse para procesar CSV en el navegador -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <!-- SheetJS CDN para manejo de hojas de cálculo -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <!-- html2pdf CDN para exportación a PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Configurar Tailwind con paleta de colores personalizada -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        ingresos: '#10B981',
+                        egresos: '#EF4444',
+                        neutro: '#6B7280'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Estilos base */
+        body {
+            background-color: #F9FAFB;
+        }
+
+        /* Animaciones suaves */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Badge hover effect */
+        .badge:hover {
+            transform: scale(1.05);
+            transition: transform 0.2s ease;
+        }
+    </style>
+  <script type="module" crossorigin src="/assets/index-BE03dYU_.js"></script>
+</head>
+
+<body class="font-sans antialiased">
+
+    <!-- Contenedor Principal -->
+    <div class="min-h-screen p-4 md:p-8 max-w-7xl mx-auto">
+
+        <!-- Encabezado Moderno -->
+        <header class="mb-8 fade-in">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                Dashboard Financiero
+            </h1>
+            <p class="text-gray-600 text-lg">Control y visualización de movimientos</p>
+
+            <!-- Indicador de estado -->
+            <div class="mt-4 flex items-center gap-3">
+                <span
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Datos actualizados en tiempo real desde Google Sheets
+                </span>
+
+                <!-- Botón Nuevo Movimiento -->
+                <button id="newMovementBtn"
+                    class="ml-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Nuevo Movimiento
+                </button>
+            </div>
+        </header>
+
+        <!-- Tarjetas KPI -->
+        <section id="kpi-section" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 fade-in">
+            <!-- Total Ingresos -->
+            <article
+                class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-gray-700">Total Ingresos</h2>
+                    <svg class="w-8 h-8 text-ingreso" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L11 5.414V16h1a1 1 0 110 2H8v-1a1 1 0 112 0v1h3a1 1 0 110 2H9v-1a1 1 0 01-1-1V5.414L6 7.707A1 1 0 014.293 6.293l3-3A1 1 0 017 3h3z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <p id="total-ingresos" class="text-3xl font-bold text-gray-900">$0</p>
+            </article>
+
+            <!-- Total Egresos -->
+            <article
+                class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-gray-700">Total Egresos</h2>
+                    <svg class="w-8 h-8 text-egresos" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L11 5.414V16h1a1 1 0 110 2H8v-1a1 1 0 112 0v1h3a1 1 0 110 2H9v-1a1 1 0 01-1-1V5.414L6 7.707A1 1 0 014.293 6.293l3-3A1 1 0 017 3h3z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <p id="total-egresos" class="text-3xl font-bold text-gray-900">$0</p>
+            </article>
+
+            <!-- Balance Neto -->
+            <article id="balance-card"
+                class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-gray-700">Balance Neto</h2>
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L11 5.414V16h1a1 1 0 110 2H8v-1a1 1 0 112 0v1h3a1 1 0 110 2H9v-1a1 1 0 01-1-1V5.414L6 7.707A1 1 0 014.293 6.293l3-3A1 1 0 017 3h3z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <p id="balance-neto" class="text-3xl font-bold text-gray-900">$0</p>
+            </article>
+        </section>
+
+        <!-- Gráfico de Distribución y Tabla -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 fade-in">
+
+            <!-- Gráfico de Egresos por Entidad Bancaria -->
+            <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Distribución de Egresos por Entidad</h2>
+                <div class="relative h-64 md:h-80 w-full">
+                    <canvas id="expenseChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Resumen Adicional -->
+            <div
+                class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col justify-center items-center text-center">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4 w-full">Total Movimientos</h2>
+                <p id="total-movements" class="text-5xl font-bold text-gray-900 mb-2">0</p>
+                <span class="text-sm text-gray-500">Transacciones registradas</span>
+            </div>
+        </section>
+
+        <!-- Sección de Filtros y Tabla -->
+        <section class="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden fade-in">
+            <div
+                class="p-6 border-b border-gray-100 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+                <h2 class="text-lg font-semibold text-gray-700 w-full md:w-auto">Últimos Movimientos</h2>
+
+                <!-- Controles de Filtro -->
+                <div class="flex flex-wrap gap-3 w-full md:w-auto">
+                    <!-- Búsqueda por Descripción o Contraparte -->
+                    <input type="text" id="searchInput" placeholder="Buscar descripción o contraparte..."
+                        class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full md:w-64">
+
+                    <!-- Filtro por Entidad Bancaria -->
+                    <select id="entityFilter"
+                        class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full md:w-48">
+                        <option value="">Todas las entidades</option>
+                    </select>
+
+                    <!-- Filtro por Tipo de Operación -->
+                    <select id="typeFilter"
+                        class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full md:w-48">
+                        <option value="">Todos los tipos</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Contador de resultados -->
+            <div class="px-6 py-3 bg-gray-50 border-b border-gray-100 text-sm text-gray-600">
+                Mostrando <span id="display-start" class="font-medium">1</span> al <span id="display-end"
+                    class="font-medium">10</span> de <span id="total-results" class="font-medium">0</span> resultados
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                FechaHora</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Entidad Bancaria</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Tipo_Operacion</th>
+                            <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Monto</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Descripción</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Contraparte</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactions-body" class="divide-y divide-gray-100 bg-white">
+                        <!-- Filas generadas dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginación -->
+            <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+                <div class="text-sm text-gray-500">
+                    Página <span id="current-page" class="font-medium text-gray-900">1</span> de <span id="total-pages"
+                        class="font-medium text-gray-900">1</span>
+                </div>
+                <div class="flex gap-2">
+                    <button id="prevPage"
+                        class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Anterior
+                    </button>
+                    <button id="nextPage"
+                        class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Siguiente
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Modal para Nuevo Movimiento -->
+    <div id="newMovementModal"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 fade-in">
+        <div class="bg-white rounded-xl shadow-lg max-w-2xl w-full mx-4 p-6">
+            <!-- Encabezado del Modal -->
+            <div class="flex items-center justify-between mb-6 border-b pb-4">
+                <h2 class="text-2xl font-bold text-gray-900">Nuevo Movimiento</h2>
+                <button id="closeModalBtn"
+                    class="text-gray-400 hover:text-gray-600 transition-colors focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Formulario -->
+            <form id="newMovementForm" class="space-y-4">
+                <!-- Clasificación Financiera -->
+                <div>
+                    <label for="classification" class="block text-sm font-medium text-gray-700 mb-1">
+                        Clasificación Financiera
+                    </label>
+                    <select id="classification" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Seleccionar...</option>
+                        <option value="Ingreso">Ingreso</option>
+                        <option value="Egreso">Egreso</option>
+                        <option value="No_Financiero">No Financiero</option>
+                    </select>
+                </div>
+
+                <!-- Tipo Operación -->
+                <div>
+                    <label for="operationType" class="block text-sm font-medium text-gray-700 mb-1">
+                        Tipo de Operación
+                    </label>
+                    <select id="operationType" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Seleccionar...</option>
+                        <option value="Transferencia">Transferencia</option>
+                        <option value="Pago">Pago</option>
+                        <option value="Compra">Compra</option>
+                        <option value="Depósito">Depósito</option>
+                    </select>
+                </div>
+
+                <!-- Entidad Bancaria -->
+                <div>
+                    <label for="entityBank" class="block text-sm font-medium text-gray-700 mb-1">
+                        Entidad Bancaria
+                    </label>
+                    <input type="text" id="entityBank" required placeholder="Ej: Banco Santander, BBVA, etc."
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Monto Numérico -->
+                <div>
+                    <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">
+                        Monto Numérico (CLP)
+                    </label>
+                    <input type="number" id="amount" required min="0" step="0.01" placeholder="Ej: 100000"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Contraparte -->
+                <div>
+                    <label for="counterparty" class="block text-sm font-medium text-gray-700 mb-1">
+                        Contraparte
+                    </label>
+                    <input type="text" id="counterparty" required placeholder="Nombre de la contraparte"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Descripción -->
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-1">
+                        Descripción
+                    </label>
+                    <input type="text" id="description" required placeholder="Descripción del movimiento"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Fecha y Hora -->
+                <div>
+                    <label for="dateHour" class="block text-sm font-medium text-gray-700 mb-1">
+                        Fecha y Hora
+                    </label>
+                    <input type="datetime-local" id="dateHour" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Tipo Financiero -->
+                <div>
+                    <label for="financialType" class="block text-sm font-medium text-gray-700 mb-1">
+                        Tipo Financiero
+                    </label>
+                    <select id="financialType" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Seleccionar...</option>
+                        <option value="Financiero">Financiero</option>
+                        <option value="No_Financiero">No Financiero</option>
+                    </select>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="flex items-center justify-end gap-3 pt-4 border-t">
+                    <button type="button" id="cancelBtn"
+                        class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        Cancelar
+                    </button>
+                    <button type="submit" id="saveBtn"
+                        class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center gap-2">
+                        <svg id="saveIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4">
+                            </path>
+                        </svg>
+                        <span id="saveText">Guardar Movimiento</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Módulo Principal ES Modules Vite -->
+</body>
+
+</html>
