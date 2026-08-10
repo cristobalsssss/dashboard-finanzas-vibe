@@ -5,10 +5,13 @@ Construir una interfaz web responsiva, moderna y limpia (Dashboard Financiero BI
 
 ## 2. Stack Tecnológico Oficial
 - **Frontend & Bundler**: Vite + HTML5 + JavaScript (ES Modules modularizado).
-- **Estilos**: Tailwind CSS (clases de utilidad responsivas).
-- **Visualización de Datos**: Chart.js para gráficos de distribución y tendencias temporales.
-- **Procesamiento de Datos**: PapaParse para lectura e interpretación de CSV público de Google Sheets.
-- **Reportes & Exportación ($0 Costo)**: SheetJS (`xlsx`) para exportación a Excel y `html2pdf.js` para generación de reportes en PDF.
+- **Despliegue Frontend**: **Vercel** (integrado mediante repositorio GitHub y `vercel.json`).
+- **Backend & Webhooks**: **n8n en Render.com** + **Supabase (PostgreSQL)**.
+- **Estilos**: Tailwind CSS (UI moderna y responsiva).
+- **Visualización de Datos**: Chart.js (Distribución de Egresos y Evolución Mensual).
+- **Carga de Datos**: PapaParse (Lectura de CSV público de Google Sheets).
+- **Reportes & Exportación**: SheetJS (`xlsx`) y `html2pdf.js`.
+- **Asistente Conversacional**: Widget de Chat flotante en el cliente conectado al Webhook de n8n/Render.
 - **Servidor Local**: Vite Dev Server (`npm run dev` en `http://localhost:5173`).
 
 ## 3. Componentes Clave de la Interfaz
@@ -35,11 +38,17 @@ Construir una interfaz web responsiva, moderna y limpia (Dashboard Financiero BI
   - `src/js/ui.js`: Renderizado de tarjetas KPI, gráficos Chart.js, tabla, paginación y modal.
   - `src/js/app.js`: Punto de entrada y orquestador de eventos/filtros.
 - **Reactividad de BI**: Todos los KPIs, gráficos y la tabla deben re-calcularse inmediatamente al cambiar cualquier filtro de fecha o criterio.
-- **Regla de Negocio Global (Filtrado de Registros)**:
-  - Todo registro cuyo campo `Clasificacion_Financiera` o `Tipo_Financiero` contenga la opción `No_Financiero` / `no_financiero` debe ser ignorado por completo desde la ingesta/procesamiento base de datos.
-  - Ningún movimiento "no financiero" debe sumarse a las tarjetas KPI, ni dibujarse en los gráficos, ni listarse en la tabla de movimientos.
+## 5. Regla de Negocio Global (Filtrado de Registros)**:
+- **Endpoints de Producción (n8n en Render)**:
+  - Registro de Movimientos: `https://<tu-servicio-n8n>.onrender.com/webhook/nuevo-movimiento`
+  - Chatbot Conversacional: `https://<tu-servicio-n8n>.onrender.com/webhook/chat-financiero`
+- **Widget de Chatbot AI (CFO Personal)**:
+  - Componente flotante en la esquina inferior derecha del Dashboard.
+  - Permite realizar preguntas en lenguaje natural sobre el estado financiero.
+  - Envía la consulta a la Rama 3 del backend de n8n y despliega la respuesta formateada en la interfaz.
+- **Filtrado Global Base**: Todo registro con `Clasificacion_Financiera == "no_financiero"` o `Tipo_Financiero == "No_Financiero"` se ignora automáticamente de tarjetas KPI, gráficos y tablas.
 
-## 5. Estructura Oficial de Datos (Google Sheets / BD)
+## 6. Estructura Oficial de Datos (Google Sheets / BD)
 El sistema opera sobre 8 campos obligatorios:
 1. `Clasificacion_Financiera`: "Ingreso | Egreso | no_financiero"
 2. `Tipo_Operacion`: "Transferencia | Pago | Compra | Depósito | Desconocido"

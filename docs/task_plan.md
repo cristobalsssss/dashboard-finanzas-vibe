@@ -31,9 +31,12 @@ Evolución de la plataforma financiera desde un prototipo monolítico en HTML ha
 - [x] **Hito 1**: Configuración de entorno local, Antigravity IDE y Tasks de Git.
 - [x] **Hito 2**: Construcción del prototipo visual responsivo en Tailwind CSS con datos mock.
 - [x] **Hito 3**: Conexión de lectura en vivo a Google Sheets publicado como CSV con PapaParse.
-- [x] **Hito 4A**: Configuración de repositorio GitHub y despliegue continuo en Vercel.
+- [x] **Hito 4A**: Configuración de repositorio GitHub y despliegue continuo en Vercel (`vercel.json`).
 - [x] **Hito 4B**: Implementación del Modal Webhook y sincronización de nuevos registros hacia n8n.
-- [🔄] **Hito 4C (En Curso)**: Modularización completa en Vite (ES Modules) + Módulo de Business Intelligence (Filtros por Fecha, 2 Gráficos y Exportación Excel/PDF).
+- [x] **Hito 4C**: Modularización completa en Vite (ES Modules) + Módulo de Business Intelligence (Filtros por Fecha, 2 Gráficos y Exportación Excel/PDF).
+- [x] **Hito 5A (Nube Backend)**: Migración e infraestructura de n8n a Render.com enlazado a PostgreSQL en Supabase.
+- [x] **Hito 5B (Backend Chatbot v7)**: Creación de la Rama 3 Conversacional (Webhook + Sheets + Agente Gemini CFO) en n8n.
+- [🔄] **Hito 5C (Frontend Chatbot Widget)**: Construcción del widget flotante de chat en la interfaz web conectada al endpoint de Render.
 
 ---
 

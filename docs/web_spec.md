@@ -62,3 +62,16 @@ Ventana emergente gatillada por el botón `+ Nuevo Movimiento`:
   2. Ejecuta una petición `POST` al Webhook de n8n: `http://localhost:5678/webhook-test/nuevo-movimiento`.
   3. Maneja errores con `try/catch` (evitando bloqueos por `Failed to fetch`).
   4. Al confirmar éxito, cierra el modal, limpia los campos, muestra notificación y refresca los datos del Dashboard.
+
+
+### G. Widget Flotante de Chatbot Conversacional (CFO Personal AI)
+- **Ubicación UI**: Botón circular flotante e interactivo posicionado en la esquina inferior derecha del Dashboard.
+- **Interfaz de Chat**:
+  - Ventana emergente tipo Messenger/WhatsApp con encabezado "CFO Personal AI".
+  - Área de mensajes con scroll automático que diferencia burbujas de usuario y de la IA.
+  - Campo de texto para redactar preguntas y botón "Enviar".
+  - Indicador visual de estado ("El CFO está analizando tus finanzas...") mientras espera la respuesta.
+- **Flujo de Integración**:
+  1. Captura la pregunta ingresada por el usuario.
+  2. Realiza una petición `POST` en formato JSON `{ "question": "..." }` a la URL del Webhook de Chatbot en Render/n8n.
+  3. Recibe la respuesta en texto plano/Markdown y la despliega dinámicamente en el historial del chat.
