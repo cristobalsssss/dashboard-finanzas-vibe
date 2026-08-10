@@ -10,8 +10,8 @@ export const SHEET_CSV_URL =
 // URL del fallback de datos locales (public/data/ → sirve como /data/ en Vite y Vercel)
 export const FALLBACK_JSON_URL = '/data/mock_finanzas.json';
 
-// URL del Webhook para guardar movimientos en n8n
-export const MOVEMENT_WEBHOOK_URL = 'http://localhost:5678/webhook-test/nuevo-movimiento';
+// URL del Webhook para guardar movimientos en n8n (Producción - Render)
+export const MOVEMENT_WEBHOOK_URL = 'https://n8n-backend-finanzas.onrender.com/webhook/nuevo-movimiento';
 
 /**
  * Aplica la regla de exclusión global: descarta movimientos no financieros.
