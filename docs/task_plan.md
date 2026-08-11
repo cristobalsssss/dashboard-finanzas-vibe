@@ -35,8 +35,8 @@ Evolución de la plataforma financiera desde un prototipo monolítico en HTML ha
 - [x] **Hito 4B**: Implementación del Modal Webhook y sincronización de nuevos registros hacia n8n.
 - [x] **Hito 4C**: Modularización completa en Vite (ES Modules) + Módulo de Business Intelligence (Filtros por Fecha, 2 Gráficos y Exportación Excel/PDF).
 - [x] **Hito 5A (Nube Backend)**: Migración e infraestructura de n8n a Render.com enlazado a PostgreSQL en Supabase.
-- [x] **Hito 5B (Backend Chatbot v7)**: Creación de la Rama 3 Conversacional (Webhook + Sheets + Agente Gemini CFO) en n8n.
-- [🔄] **Hito 5C (Frontend Chatbot Widget)**: Construcción del widget flotante de chat en la interfaz web conectada al endpoint de Render.
+- [ ] **Hito 5B (Backend Chatbot v7 Full)**: Creación de la Rama 3 Bidireccional (Webhook + Clasificador de Intención + Sheets RAG/Append + Agente Gemini CFO) en n8n.
+- [ ] **Hito 5C (Frontend Chatbot Widget Dual)**: Construcción del widget flotante de chat en la interfaz web conectado al endpoint de Render con auto-refresco de datos.
 
 ---
 

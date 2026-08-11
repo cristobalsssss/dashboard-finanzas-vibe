@@ -42,10 +42,10 @@ Construir una interfaz web responsiva, moderna y limpia (Dashboard Financiero BI
 - **Endpoints de Producción (n8n en Render)**:
   - Registro de Movimientos: `https://<tu-servicio-n8n>.onrender.com/webhook/nuevo-movimiento`
   - Chatbot Conversacional: `https://<tu-servicio-n8n>.onrender.com/webhook/chat-financiero`
-- **Widget de Chatbot AI (CFO Personal)**:
+- **Widget de Chatbot AI Dual (CFO Personal Operativo)**:
   - Componente flotante en la esquina inferior derecha del Dashboard.
-  - Permite realizar preguntas en lenguaje natural sobre el estado financiero.
-  - Envía la consulta a la Rama 3 del backend de n8n y despliega la respuesta formateada en la interfaz.
+  - Responde consultas analíticas sobre el estado financiero **y ejecuta el registro de movimientos en lenguaje natural** (ej: "Anota un gasto de $10.000 en Santander por supermercado").
+  - Envía la solicitud a la Rama 3 de n8n en Render y detona el refresco automático de las tarjetas y gráficos al completar una acción de escritura.
 - **Filtrado Global Base**: Todo registro con `Clasificacion_Financiera == "no_financiero"` o `Tipo_Financiero == "No_Financiero"` se ignora automáticamente de tarjetas KPI, gráficos y tablas.
 
 ## 6. Estructura Oficial de Datos (Google Sheets / BD)

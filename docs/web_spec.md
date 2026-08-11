@@ -71,7 +71,8 @@ Ventana emergente gatillada por el botón `+ Nuevo Movimiento`:
   - Área de mensajes con scroll automático que diferencia burbujas de usuario y de la IA.
   - Campo de texto para redactar preguntas y botón "Enviar".
   - Indicador visual de estado ("El CFO está analizando tus finanzas...") mientras espera la respuesta.
-- **Flujo de Integración**:
-  1. Captura la pregunta ingresada por el usuario.
-  2. Realiza una petición `POST` en formato JSON `{ "question": "..." }` a la URL del Webhook de Chatbot en Render/n8n.
-  3. Recibe la respuesta en texto plano/Markdown y la despliega dinámicamente en el historial del chat.
+- **Flujo de Integración Dual (Lectura + Acción)**:
+  1. Captura el mensaje ingresado por el usuario (ya sea una consulta o una instrucción para registrar un movimiento).
+  2. Realiza una petición `POST` en formato JSON `{ "question": "..." }` al webhook `/webhook/chat-financiero` en Render.
+  3. Despliega la respuesta conversacional procesada por Gemini en la ventana de chat.
+  4. **Reactividad Visual en Tiempo Real**: Si la respuesta confirma la creación de un nuevo registro (`action_performed == "append_row"`), el widget de chat gatilla automáticamente la recarga de los datos del Dashboard (tarjetas KPI, gráficos y tabla) sin refrescar toda la página.
