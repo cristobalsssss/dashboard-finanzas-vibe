@@ -1,17 +1,15 @@
 /**
  * src/js/api.js
- * Módulo para comunicación con APIs externas (Google Sheets CSV y Webhook n8n)
+ * Módulo para comunicación con APIs externas (Google Sheets CSV y Webhooks n8n)
  */
 
-// URL pública del Google Sheets en formato CSV (fuente de datos principal)
-export const SHEET_CSV_URL =
-    'https://docs.google.com/spreadsheets/d/e/2PACX-1vQmY2cIdZKipZcic_s61HaLZ3IoPVPoPQORK9Xllap6fqnrpjr3vpXEqEkgEuVpgx034HhJvBXAmBeF/pub?output=csv';
+import { CONFIG } from './config.js';
 
-// URL del fallback de datos locales (public/data/ → sirve como /data/ en Vite y Vercel)
-export const FALLBACK_JSON_URL = '/data/mock_finanzas.json';
-
-// URL del Webhook para guardar movimientos en n8n (Producción - Render)
-export const MOVEMENT_WEBHOOK_URL = 'https://n8n-backend-finanzas.onrender.com/webhook/nuevo-movimiento';
+// Re-exportar URLs desde la configuración centralizada
+export const SHEET_CSV_URL = CONFIG.SHEET_CSV_URL;
+export const FALLBACK_JSON_URL = CONFIG.FALLBACK_JSON_URL;
+export const MOVEMENT_WEBHOOK_URL = CONFIG.MOVEMENT_WEBHOOK_URL;
+export const CHAT_WEBHOOK_URL = CONFIG.CHAT_WEBHOOK_URL;
 
 /**
  * Aplica la regla de exclusión global: descarta movimientos no financieros.
@@ -46,7 +44,6 @@ function parseAndFilterRows(rows) {
  */
 export function loadCSVData() {
     return new Promise((resolve, reject) => {
-
         console.log('[Dashboard Financiero] Iniciando carga de datos desde:', SHEET_CSV_URL);
 
         if (typeof Papa === 'undefined') {
@@ -124,4 +121,93 @@ export async function sendMovementWebhook(formData) {
     }
 
     return response;
+}
+
+/**
+ * Envía un mensaje en lenguaje natural al Webhook de Chatbot de n8n.
+ * Soporta respuestas JSON, texto plano y detección de registros financieros para reactividad.
+ * 
+ * @param {string} userMessage Mensaje ingresado por el usuario.
+ * @param {string} [customUrl] URL opcional para sobreescribir el endpoint por defecto.
+ * @returns {Promise<{text: string, movementRegistered: boolean, raw: any}>} Respuesta procesada.
+ */
+export async function sendChatMessage(userMessage, customUrl = null) {
+    const url = customUrl || CHAT_WEBHOOK_URL;
+    console.log('[Chatbot AI] Enviando mensaje a:', url);
+
+    const payload = {
+        question: userMessage,
+        chatInput: userMessage,
+        message: userMessage,
+        timestamp: new Date().toISOString()
+    };
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error del servidor n8n (${response.status}): ${response.statusText}`);
+    }
+
+    // Procesar cuerpo de la respuesta (JSON o Texto plano)
+    const contentType = response.headers.get('content-type') || '';
+    let rawData = null;
+    let replyText = '';
+    let movementRegistered = false;
+
+    if (contentType.includes('application/json')) {
+        rawData = await response.json();
+
+        // Extraer texto conversacional según el formato de respuesta del nodo n8n
+        if (typeof rawData === 'string') {
+            replyText = rawData;
+        } else if (Array.isArray(rawData) && rawData.length > 0) {
+            const firstItem = rawData[0];
+            replyText = firstItem.output || firstItem.text || firstItem.message || firstItem.response || JSON.stringify(firstItem);
+            movementRegistered = Boolean(
+                firstItem.action_performed === 'append_row' ||
+                firstItem.registered === true ||
+                firstItem.movement_created === true ||
+                firstItem.action === 'append'
+            );
+        } else if (typeof rawData === 'object' && rawData !== null) {
+            replyText = rawData.output || rawData.text || rawData.message || rawData.response || rawData.reply || JSON.stringify(rawData);
+            movementRegistered = Boolean(
+                rawData.action_performed === 'append_row' ||
+                rawData.registered === true ||
+                rawData.movement_created === true ||
+                rawData.action === 'append'
+            );
+        }
+    } else {
+        replyText = await response.text();
+        rawData = replyText;
+    }
+
+    // Regla de detección heurística si el backend devuelve un texto confirmando el registro
+    const lowerReply = (replyText || '').toLowerCase();
+    const indicatesRegistration = 
+        lowerReply.includes('he registrado') || 
+        lowerReply.includes('se ha registrado') || 
+        lowerReply.includes('movimiento registrado') ||
+        lowerReply.includes('gasto registrado') ||
+        lowerReply.includes('ingreso registrado') ||
+        lowerReply.includes('guardado exitosamente') ||
+        lowerReply.includes('anotado exitosamente') ||
+        lowerReply.includes('fila agregada');
+
+    if (indicatesRegistration) {
+        movementRegistered = true;
+    }
+
+    return {
+        text: replyText || 'El CFO procesó la consulta sin respuesta de texto.',
+        movementRegistered,
+        raw: rawData
+    };
 }

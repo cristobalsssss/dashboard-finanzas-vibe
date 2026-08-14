@@ -479,6 +479,169 @@
         </div>
     </div>
 
+    <!-- ========================================== -->
+    <!-- WIDGET CHATBOT FINANCIERO (CFO PERSONAL AI) -->
+    <!-- ========================================== -->
+
+    <!-- Botón Flotante (FAB) en la esquina inferior derecha -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <button id="chatToggleBtn" type="button" aria-label="Abrir Asistente Financiero"
+            class="relative group w-14 h-14 rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center focus:outline-none focus:ring-4 focus:ring-blue-300">
+            
+            <!-- Indicador de Estado En Línea -->
+            <span id="chatNotificationBadge"
+                class="absolute top-0 right-0 w-3.5 h-3.5 bg-emerald-400 border-2 border-white rounded-full">
+                <span class="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-75"></span>
+            </span>
+
+            <!-- Ícono de Chat (Abierto) -->
+            <svg id="chatIconOpen" class="w-6 h-6 transition-transform group-hover:scale-110" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z">
+                </path>
+            </svg>
+
+            <!-- Ícono de Cerrar (X) -->
+            <svg id="chatIconClose" class="w-6 h-6 hidden transition-transform group-hover:rotate-90" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                </path>
+            </svg>
+
+            <!-- Tooltip flotante al pasar el mouse -->
+            <span
+                class="absolute right-16 px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
+                💬 CFO Personal AI
+            </span>
+        </button>
+    </div>
+
+    <!-- Ventana Conversacional del Chatbot -->
+    <div id="chatWidget"
+        class="fixed bottom-24 right-4 sm:right-6 z-50 w-[94vw] sm:w-[420px] h-[550px] max-h-[82vh] bg-white rounded-2xl shadow-2xl border border-gray-200/80 flex flex-col overflow-hidden transition-all duration-300 origin-bottom-right hidden scale-95 opacity-0 pointer-events-none">
+
+        <!-- Encabezado del Chat -->
+        <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-900 text-white px-4 py-3.5 flex items-center justify-between shadow-md">
+            <div class="flex items-center gap-3">
+                <div class="relative w-9 h-9 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-400 p-0.5 shadow-sm">
+                    <div class="w-full h-full bg-slate-900 rounded-full flex items-center justify-center text-white">
+                        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 border-2 border-slate-900 rounded-full"></span>
+                </div>
+                <div>
+                    <h2 class="text-sm font-bold text-white flex items-center gap-1.5">
+                        CFO Personal AI
+                        <span class="text-[10px] bg-blue-500/30 text-blue-200 border border-blue-400/30 px-1.5 py-0.5 rounded font-normal">n8n</span>
+                    </h2>
+                    <p class="text-[11px] text-gray-300 flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        Asistente Financiero en línea
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-1">
+                <!-- Botón Limpiar Chat -->
+                <button type="button" id="clearChatBtn" title="Reiniciar conversación"
+                    class="p-1.5 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors focus:outline-none">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                </button>
+
+                <!-- Botón Cerrar Chat -->
+                <button type="button" id="chatCloseBtn" title="Cerrar chat"
+                    class="p-1.5 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors focus:outline-none">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Chips de Sugerencias Rápidas -->
+        <div class="px-3 py-2 bg-slate-100/80 border-b border-gray-200/60 flex items-center gap-1.5 overflow-x-auto text-[11px] no-scrollbar">
+            <span class="text-gray-500 font-medium shrink-0">💡 Sugerencias:</span>
+            <button type="button" class="chat-quick-chip shrink-0 px-2.5 py-1 bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 text-gray-700 rounded-full border border-gray-200 transition-colors shadow-2xs cursor-pointer"
+                data-prompt="¿Cuál es mi balance neto actual y el total de ingresos?">
+                📊 Balance neto
+            </button>
+            <button type="button" class="chat-quick-chip shrink-0 px-2.5 py-1 bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 text-gray-700 rounded-full border border-gray-200 transition-colors shadow-2xs cursor-pointer"
+                data-prompt="¿Cuáles son mis 3 mayores gastos registrados?">
+                📉 Mayores gastos
+            </button>
+            <button type="button" class="chat-quick-chip shrink-0 px-2.5 py-1 bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 text-gray-700 rounded-full border border-gray-200 transition-colors shadow-2xs cursor-pointer"
+                data-prompt="Anota un gasto de $12.000 en Santander por almuerzo">
+                ➕ Anotar gasto
+            </button>
+        </div>
+
+        <!-- Área de Mensajes del Chat -->
+        <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50/60">
+            <!-- Mensaje de Bienvenida Inicial del CFO -->
+            <div class="flex items-start gap-2.5 mb-4 fade-in">
+                <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-600 to-blue-500 flex items-center justify-center text-white shrink-0 shadow-sm mt-0.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <div class="flex flex-col max-w-[85%]">
+                    <div class="bg-white border border-gray-100 text-gray-800 rounded-2xl rounded-tl-none px-4 py-3 shadow-sm text-sm leading-relaxed">
+                        <p class="font-medium text-gray-900 mb-1">¡Hola! Soy tu CFO Personal AI 💼</p>
+                        <p class="text-gray-600 text-xs mb-2">Puedo responder dudas analíticas sobre tus finanzas o registrar nuevos movimientos en tu planilla con lenguaje natural.</p>
+                        <div class="text-[11px] text-gray-500 bg-gray-50 p-2 rounded-lg border border-gray-100">
+                            💡 <strong>Ejemplos:</strong><br>
+                            • <em>"¿Cuánto he gastado este mes en Santander?"</em><br>
+                            • <em>"Anota un gasto de $15.000 en Banco de Chile por farmacia"</em>
+                        </div>
+                    </div>
+                    <span class="text-[10px] text-gray-400 mt-1 ml-1">En línea • CFO AI</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Indicador de "CFO procesando..." -->
+        <div id="chatLoading" class="hidden px-4 py-2 bg-slate-50/80 border-t border-gray-100 fade-in">
+            <div class="flex items-center gap-2 text-xs text-indigo-700 font-medium">
+                <div class="flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full bg-indigo-600 animate-bounce" style="animation-delay: 0ms"></span>
+                    <span class="w-2 h-2 rounded-full bg-indigo-600 animate-bounce" style="animation-delay: 150ms"></span>
+                    <span class="w-2 h-2 rounded-full bg-indigo-600 animate-bounce" style="animation-delay: 300ms"></span>
+                </div>
+                <span>CFO procesando...</span>
+            </div>
+        </div>
+
+        <!-- Formulario de Entrada de Mensajes -->
+        <form id="chatForm" class="p-3 bg-white border-t border-gray-200/80 flex flex-col gap-1.5">
+            <div class="flex items-center gap-2">
+                <input type="text" id="chatInput" autocomplete="off" placeholder="Pregunta o dicta un movimiento..."
+                    class="flex-1 px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-gray-800 placeholder-gray-400">
+                <button type="submit" id="chatSendBtn"
+                    class="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-95 text-white rounded-xl font-medium transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-blue-500/20 cursor-pointer">
+                    <svg class="w-4 h-4 rotate-90" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                    </svg>
+                </button>
+            </div>
+            <div class="flex items-center justify-between text-[10px] text-gray-400 px-1">
+                <span>Enter para enviar</span>
+                <span class="flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    n8n Webhook Test
+                </span>
+            </div>
+        </form>
+    </div>
+
     <!-- Módulo Principal ES Modules Vite -->
     <script type="module" src="./src/main.js"></script>
 </body>

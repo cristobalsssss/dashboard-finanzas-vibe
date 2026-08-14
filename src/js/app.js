@@ -1,6 +1,6 @@
 /**
  * src/js/app.js
- * Punto de entrada principal para Vite y orquestador del Dashboard BI.
+ * Punto de entrada principal para Vite y orquestador del Dashboard BI y Chatbot CFO.
  */
 
 import { loadCSVData, sendMovementWebhook } from './api.js';
@@ -18,6 +18,7 @@ import {
     showSuccessNotification,
     showErrorNotification
 } from './ui.js';
+import { initChatWidget } from './chat.js';
 
 // Estado global de la aplicación
 let finanzasData = [];
@@ -83,6 +84,28 @@ function renderCurrentPage() {
 }
 
 /**
+ * Recarga los datos financieros en tiempo real desde la fuente (Google Sheets / Fallback)
+ * y actualiza instantáneamente KPIs, gráficos y tabla sin refrescar la página.
+ */
+export async function reloadDashboardData() {
+    console.log('[Dashboard Financiero] Recargando datos en vivo...');
+    try {
+        const freshData = await loadCSVData();
+        if (freshData && freshData.length > 0) {
+            finanzasData = freshData;
+            populateEntityFilter(finanzasData);
+            populateClassificationFilter(finanzasData);
+            populateTypeFilter(finanzasData);
+            handleFilters();
+            showSuccessNotification('Dashboard sincronizado con Google Sheets');
+        }
+    } catch (error) {
+        console.error('Error al recargar dashboard:', error);
+        showErrorNotification('Error al actualizar datos: ' + error.message);
+    }
+}
+
+/**
  * Refresca el dashboard al ingresar un nuevo movimiento.
  * Descarta movimientos no financieros según la regla de negocio global.
  * @param {Object} newMovement Nuevo objeto movimiento.
@@ -140,7 +163,7 @@ async function handleSaveNewMovement(event) {
 }
 
 /**
- * Configura los event listeners para controles BI, paginación, exportación y modal.
+ * Configura los event listeners para controles BI, paginación, exportación, modal y chatbot.
  */
 function setupEventListeners() {
     // Filtros de búsqueda y desplegables BI
@@ -206,6 +229,9 @@ function setupEventListeners() {
         });
     }
     if (newMovementForm) newMovementForm.addEventListener('submit', handleSaveNewMovement);
+
+    // Inicializar Widget de Chatbot Financiero con callback de recarga reactiva
+    initChatWidget(reloadDashboardData);
 }
 
 /**
