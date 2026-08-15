@@ -59,7 +59,9 @@ Ventana emergente gatillada por el botón `+ Nuevo Movimiento`:
 - **Formulario**: Contiene los 8 campos requeridos (`Clasificacion_Financiera`, `Tipo_Operacion`, `Entidad_Bancaria`, `Monto_Numerico`, `Contraparte`, `Descripcion`, `FechaHora`, `Tipo_Financiero`).
 - **Acción Guardar**: Al presionar `Guardar Movimiento`:
   1. Cambia el botón a estado "Guardando...".
-  2. Ejecuta una petición `POST` al Webhook de n8n: `http://localhost:5678/webhook-test/nuevo-movimiento`.
+  2. Ejecuta una petición `POST` al Webhook de n8n resuelto dinámicamente:
+     - Local: `http://localhost:5678/webhook-test/nuevo-movimiento` (o `/webhook/nuevo-movimiento`)
+     - Producción Render: `https://n8n-backend-finanzas.onrender.com/webhook/nuevo-movimiento`
   3. Maneja errores con `try/catch` (evitando bloqueos por `Failed to fetch`).
   4. Al confirmar éxito, cierra el modal, limpia los campos, muestra notificación y refresca los datos del Dashboard.
 
@@ -73,6 +75,8 @@ Ventana emergente gatillada por el botón `+ Nuevo Movimiento`:
   - Indicador visual de estado ("El CFO está analizando tus finanzas...") mientras espera la respuesta.
 - **Flujo de Integración Dual (Lectura + Acción)**:
   1. Captura el mensaje ingresado por el usuario (ya sea una consulta o una instrucción para registrar un movimiento).
-  2. Realiza una petición `POST` en formato JSON `{ "question": "..." }` al webhook `/webhook/chat-financiero` en Render.
+  2. Realiza una petición `POST` en formato JSON `{ "question": "..." }` al endpoint resuelto dinámicamente:
+     - Local: `http://localhost:5678/webhook-test/chat-financiero` (o `/webhook/chat-financiero`)
+     - Producción Render: `https://n8n-backend-finanzas.onrender.com/webhook/chat-financiero`
   3. Despliega la respuesta conversacional procesada por Gemini en la ventana de chat.
   4. **Reactividad Visual en Tiempo Real**: Si la respuesta confirma la creación de un nuevo registro (`action_performed == "append_row"`), el widget de chat gatilla automáticamente la recarga de los datos del Dashboard (tarjetas KPI, gráficos y tabla) sin refrescar toda la página.

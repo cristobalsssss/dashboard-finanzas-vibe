@@ -104,20 +104,47 @@ async function loadFallbackData() {
 
 /**
  * Envía un nuevo movimiento mediante HTTP POST al Webhook de n8n.
+ * Resuelve automáticamente entre localhost y producción Render según el entorno.
  * @param {Object} formData Datos del nuevo movimiento.
  * @returns {Promise<Response>} Respuesta de la petición HTTP fetch.
  */
 export async function sendMovementWebhook(formData) {
-    const response = await fetch(MOVEMENT_WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-    });
+    const url = CONFIG.MOVEMENT_WEBHOOK_URL;
+    console.log(`[API Movimientos] Enviando nuevo movimiento a [${CONFIG.environment.toUpperCase()}]:`, url);
+
+    let response;
+    try {
+        response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+    } catch (fetchErr) {
+        console.error(`[API Movimientos] Error de conexión con ${url}:`, fetchErr);
+        throw fetchErr;
+    }
+
+    // Fallback inteligente en desarrollo local: si el webhook de prueba devuelve 404, reintentar con el webhook de producción local
+    if (!response.ok && response.status === 404 && CONFIG.isLocal && url === CONFIG.ENDPOINTS.LOCAL.MOVEMENT_TEST) {
+        console.warn('[API Movimientos] Webhook de test 404 (inactivo en n8n). Probando webhook local de producción:', CONFIG.ENDPOINTS.LOCAL.MOVEMENT_PROD);
+        try {
+            const fallbackResponse = await fetch(CONFIG.ENDPOINTS.LOCAL.MOVEMENT_PROD, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            if (fallbackResponse.ok) {
+                return fallbackResponse;
+            }
+        } catch (fallbackErr) {
+            console.warn('[API Movimientos] Reintento de fallback local no disponible:', fallbackErr);
+        }
+    }
 
     if (!response.ok) {
-        throw new Error(`Error al guardar en Webhook: ${response.statusText}`);
+        throw new Error(`Error al guardar en Webhook (${response.status}): ${response.statusText}`);
     }
 
     return response;
@@ -132,8 +159,8 @@ export async function sendMovementWebhook(formData) {
  * @returns {Promise<{text: string, movementRegistered: boolean, raw: any}>} Respuesta procesada.
  */
 export async function sendChatMessage(userMessage, customUrl = null) {
-    const url = customUrl || CHAT_WEBHOOK_URL;
-    console.log('[Chatbot AI] Enviando mensaje a:', url);
+    const url = customUrl || CONFIG.CHAT_WEBHOOK_URL;
+    console.log(`[Chatbot AI] Enviando mensaje a [${CONFIG.environment.toUpperCase()}]:`, url);
 
     const payload = {
         question: userMessage,
@@ -142,13 +169,36 @@ export async function sendChatMessage(userMessage, customUrl = null) {
         timestamp: new Date().toISOString()
     };
 
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-    });
+    let response;
+    try {
+        response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+    } catch (fetchErr) {
+        console.error(`[Chatbot AI] Error de conexión con ${url}:`, fetchErr);
+        throw fetchErr;
+    }
+
+    // Fallback inteligente en desarrollo local: si el webhook de prueba devuelve 404, reintentar con el webhook de producción local
+    if (!response.ok && response.status === 404 && CONFIG.isLocal && !customUrl && url === CONFIG.ENDPOINTS.LOCAL.CHAT_TEST) {
+        console.warn('[Chatbot AI] Webhook de test 404 (inactivo en n8n). Probando webhook local de producción:', CONFIG.ENDPOINTS.LOCAL.CHAT_PROD);
+        try {
+            const fallbackResponse = await fetch(CONFIG.ENDPOINTS.LOCAL.CHAT_PROD, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (fallbackResponse.ok) {
+                response = fallbackResponse;
+            }
+        } catch (fallbackErr) {
+            console.warn('[Chatbot AI] Reintento de fallback local no disponible:', fallbackErr);
+        }
+    }
 
     if (!response.ok) {
         throw new Error(`Error del servidor n8n (${response.status}): ${response.statusText}`);

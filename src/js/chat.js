@@ -163,7 +163,10 @@ async function handleSendMessage(event) {
     } catch (error) {
         console.error('[Chatbot AI] Error al procesar mensaje:', error);
         setChatLoading(false);
-        appendErrorMessage(`No se pudo conectar con el CFO en n8n: ${error.message}. Verifica que el flujo esté activo en localhost:5678.`);
+        const serverHint = CONFIG.isLocal 
+            ? 'Verifica que n8n esté activo en http://localhost:5678.' 
+            : 'Verifica la disponibilidad del servicio n8n en Render.';
+        appendErrorMessage(`No se pudo conectar con el CFO en n8n: ${error.message}. ${serverHint}`);
     }
 }
 

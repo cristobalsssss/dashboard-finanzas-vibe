@@ -29,19 +29,27 @@ Construir una interfaz web responsiva, moderna y limpia (Dashboard Financiero BI
   - Paginación dinámica (10 registros por página) con contador ("Mostrando X a Y de Z resultados").
 
 ## 4. Arquitectura y Guardarraíles de Código
-- **Arquitectura Bidireccional**:
+- **Arquitectura Bidireccional y Resolución Dinámica de Endpoints**:
   - *Lectura*: Conexión directa al feed CSV publicado de Google Sheets mediante `fetch` + PapaParse en `src/js/api.js`.
-  - *Escritura*: Envío de nuevos movimientos vía `POST` al Webhook de n8n (`http://localhost:5678/webhook-test/nuevo-movimiento`).
+  - *Escritura*: Envío de nuevos movimientos y chat con resolución automática según entorno (Local vs Producción):
+    - **Local (`localhost` / `127.0.0.1`)**:
+      - Movimientos: `http://localhost:5678/webhook-test/nuevo-movimiento` (o `/webhook/nuevo-movimiento`)
+      - Chatbot CFO: `http://localhost:5678/webhook-test/chat-financiero` (o `/webhook/chat-financiero`)
+    - **Producción (Vercel / Render)**:
+      - Movimientos: `https://n8n-backend-finanzas.onrender.com/webhook/nuevo-movimiento`
+      - Chatbot CFO: `https://n8n-backend-finanzas.onrender.com/webhook/chat-financiero`
 - **Modularización Estricta (Vite)**:
   - `src/index.html`: Estructura HTML principal con contenedores de UI y modal.
+  - `src/js/config.js`: Configuración dinámica de entorno y resolución de webhooks.
   - `src/js/api.js`: Lógica de comunicación con Google Sheets (GET) y n8n Webhook (POST).
   - `src/js/ui.js`: Renderizado de tarjetas KPI, gráficos Chart.js, tabla, paginación y modal.
+  - `src/js/chat.js`: Interfaz conversacional y disparador reactivo de sincronización.
   - `src/js/app.js`: Punto de entrada y orquestador de eventos/filtros.
 - **Reactividad de BI**: Todos los KPIs, gráficos y la tabla deben re-calcularse inmediatamente al cambiar cualquier filtro de fecha o criterio.
 ## 5. Regla de Negocio Global (Filtrado de Registros)**:
 - **Endpoints de Producción (n8n en Render)**:
-  - Registro de Movimientos: `https://<tu-servicio-n8n>.onrender.com/webhook/nuevo-movimiento`
-  - Chatbot Conversacional: `https://<tu-servicio-n8n>.onrender.com/webhook/chat-financiero`
+  - Registro de Movimientos: `https://n8n-backend-finanzas.onrender.com/webhook/nuevo-movimiento`
+  - Chatbot Conversacional: `https://n8n-backend-finanzas.onrender.com/webhook/chat-financiero`
 - **Widget de Chatbot AI Dual (CFO Personal Operativo)**:
   - Componente flotante en la esquina inferior derecha del Dashboard.
   - Responde consultas analíticas sobre el estado financiero **y ejecuta el registro de movimientos en lenguaje natural** (ej: "Anota un gasto de $10.000 en Santander por supermercado").

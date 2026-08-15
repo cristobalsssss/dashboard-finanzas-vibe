@@ -40,6 +40,7 @@ Evolución de la plataforma financiera desde un prototipo monolítico en HTML ha
 - [x] **Hito 5A (Nube Backend)**: Migración e infraestructura de n8n a Render.com enlazado a PostgreSQL en Supabase.
 - [ ] **Hito 5B (Backend Chatbot v7 Full)**: Creación de la Rama 3 Bidireccional (Webhook + Clasificador de Intención + Sheets RAG/Append + Agente Gemini CFO) en n8n.
 - [x] **Hito 5C (Frontend Chatbot Widget Dual)**: Construcción del widget flotante de chat en la interfaz web conectado al endpoint de n8n con auto-refresco de datos.
+- [x] **Hito 5D (Resolución Dinámica de Endpoints)**: Configuración automática de URLs n8n según entorno de ejecución (Localhost vs Producción Vercel/Render).
 
 ---
 
